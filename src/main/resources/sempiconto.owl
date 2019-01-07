@@ -95,7 +95,16 @@
         <rdfs:domain rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person"/>
         <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
     </owl:ObjectProperty>
-    
+
+
+    <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#takenBy -->
+
+   <owl:ObjectProperty rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#takenBy">
+       <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+       <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+       <rdfs:domain rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Photo"/>
+       <rdfs:label>taken by</rdfs:label>
+   </owl:ObjectProperty>
 
 
     <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#takenIn -->
