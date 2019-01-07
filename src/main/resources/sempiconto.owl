@@ -300,6 +300,7 @@
     <!-- http://fr.dbpedia.org/ontology/Place -->
 
     <owl:Class rdf:about="&dbpedia;Place">
+        <rdfs:label xml:lang="fr">Lieu</rdfs:label>
         <rdfs:label>Place
 </rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Depiction"/>
@@ -345,9 +346,9 @@
     
 
 
-    <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Evenement -->
+    <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Event -->
 
-    <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Evenement">
+    <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Event">
         <rdfs:label>Event</rdfs:label>
         <rdfs:label xml:lang="fr">Evenement</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Depiction"/>
@@ -358,6 +359,8 @@
     <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Female -->
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Female">
+        <rdfs:label xml:lang="fr">Homme</rdfs:label>
+        <rdfs:label>Male</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person"/>
     </owl:Class>
     
@@ -366,6 +369,8 @@
     <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Male -->
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Male">
+        <rdfs:label>Female</rdfs:label>
+        <rdfs:label xml:lang="fr">Femme</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person"/>
     </owl:Class>
     
@@ -374,6 +379,8 @@
     <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Monument -->
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Monument">
+        <rdfs:label>Monument</rdfs:label>
+        <rdfs:label xml:lang="fr">Monument</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Object"/>
     </owl:Class>
     
@@ -382,6 +389,8 @@
     <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Nature -->
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Nature">
+        <rdfs:label>Nature</rdfs:label>
+        <rdfs:label xml:lang="fr">Nature</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Object"/>
     </owl:Class>
     
@@ -391,6 +400,7 @@
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Object">
         <rdfs:label>Object</rdfs:label>
+        <rdfs:label xml:lang="fr">Objet</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Depiction"/>
     </owl:Class>
     
@@ -400,6 +410,7 @@
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person">
         <rdfs:label>Person</rdfs:label>
+        <rdfs:label xml:lang="fr">Personne</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Depiction"/>
     </owl:Class>
     
@@ -416,6 +427,8 @@
     <!-- http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Product -->
 
     <owl:Class rdf:about="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Product">
+        <rdfs:label>Product</rdfs:label>
+        <rdfs:label xml:lang="fr">Produit</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Object"/>
     </owl:Class>
 </rdf:RDF>
