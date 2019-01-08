@@ -22,33 +22,77 @@ public class ExampleRDFStore {
     public static void main(String[] args) {
         RDFStore s = new RDFStore();
 
+        s.cleanAllResource();
+
         Model m = ModelFactory.createDefaultModel();
-/*
+
+        /*
         Resource pRes1 = s.createPhoto(1, 1, 1);
         Resource pRes2 = s.createPhoto(2, 1, 1);
+        */
 
-        Resource newTele = m.createResource(SempicOnto.Tele);
-        newTele.addLiteral(RDFS.label, "Samsung");
+        Resource newPerson1 = m.createResource(SempicOnto.Male);
+        newPerson1.addLiteral(RDFS.label, "Manuel");
         m.write(System.out, "turtle");
 
-        Resource newPerson = m.createResource(SempicOnto.Person);
-        newPerson.addLiteral(RDFS.label, "Meme");
+        Resource newPerson2 = m.createResource(SempicOnto.Male);
+        newPerson2.addLiteral(RDFS.label, "Jérome");
+        m.write(System.out, "turtle");
+
+        // Julie femme de Jérome
+        Resource newPerson3 = m.createResource(SempicOnto.Female);
+        newPerson3.addLiteral(RDFS.label, "Julie");
+        m.add(newPerson1, SempicOnto.hasWife, newPerson3);
+        m.write(System.out, "turtle");
+
+        // Daniel père de Jérome et Julie
+        Resource newPerson4 = m.createResource(SempicOnto.Male);
+        newPerson4.addLiteral(RDFS.label, "Daniel");
+        m.add(newPerson4, SempicOnto.hasDaughter, newPerson3);
+        m.add(newPerson4, SempicOnto.hasSon, newPerson2);
+        m.write(System.out, "turtle");
+
+        // Fatima mère de Daniel donc grand mère de Jérome et Julie
+        Resource newPerson5 = m.createResource(SempicOnto.Male);
+        newPerson5.addLiteral(RDFS.label, "Fatima");
+        m.add(newPerson5, SempicOnto.hasSon, newPerson4);
         m.write(System.out, "turtle");
 
         Resource newDog = m.createResource(SempicOnto.Dog);
         newDog.addLiteral(RDFS.label, "Medor");
-        m.add(pRes1, SempicOnto.depicts, newDog);
-        m.add(newPerson, SempicOnto.owns, newDog);
+        m.add(newPerson1, SempicOnto.owns, newDog);
         m.write(System.out, "turtle");
 
         Resource newCat = m.createResource(SempicOnto.Cat);
         newCat.addLiteral(RDFS.label, "Felix");
-        m.add(pRes2, SempicOnto.depicts, newCat);
-        m.add(newPerson, SempicOnto.owns, newCat);
+        m.add(newPerson2, SempicOnto.owns, newCat);
+        m.write(System.out, "turtle");
+
+        Resource newEvent1 = m.createResource(SempicOnto.Event);
+        newEvent1.addLiteral(RDFS.label, "Anniversaire");
+        m.write(System.out, "turtle");
+
+        Resource newEvent2 = m.createResource(SempicOnto.Event);
+        newEvent2.addLiteral(RDFS.label, "Crémaillère");
+        m.write(System.out, "turtle");
+
+        Resource newEvent3 = m.createResource(SempicOnto.Event);
+        newEvent3.addLiteral(RDFS.label, "Pôt de départ");
+        m.write(System.out, "turtle");
+
+        Resource newMonument = m.createResource(SempicOnto.Monument);
+        newMonument.addLiteral(RDFS.label, "Tour Eiffel");
+        m.write(System.out, "turtle");
+
+        Resource newNature1 = m.createResource(SempicOnto.Nature);
+        newNature1.addLiteral(RDFS.label, "Montagne");
+        m.write(System.out, "turtle");
+
+        Resource newNature2 = m.createResource(SempicOnto.Nature);
+        newNature2.addLiteral(RDFS.label, "Plage");
         m.write(System.out, "turtle");
 
         s.saveModel(m);
-        */
         
 
     
