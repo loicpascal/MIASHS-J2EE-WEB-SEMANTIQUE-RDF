@@ -121,12 +121,23 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listSubClassesOf(Resource c) {
+        
+        String queryStr = "CONSTRUCT { "
+                + "?s <" + RDFS.label + "> ?o "
+                + "} WHERE {"
+                + "?s <" + RDFS.subClassOf + "> <" + c.getURI() + "> ."
+                + "?s <" + RDFS.label + "> ?o ."
+                + "}";
+        Query query = QueryFactory.create(queryStr);
+        Model m = cnx.queryConstruct(query);
+        /*
         Model m = cnx.queryConstruct("CONSTRUCT { "
                 + "?s <" + RDFS.label + "> ?o "
                 + "} WHERE {"
                 + "?s <" + RDFS.subClassOf + "> <" + c.getURI() + "> ."
                 + "?s <" + RDFS.label + "> ?o ."
                 + "}");
+        */
         return m.listSubjects().toList();
     }
     
@@ -192,7 +203,12 @@ public class RDFStore {
 
         //cnx.addParam("timeout", "10000") ;
         
-        Model m = cnx.queryConstruct(ns + query);
+        
+        Query q = QueryFactory.create(ns + query);
+        Model m = cnx.queryConstruct(q); 
+        
+        
+        //Model m = cnx.queryConstruct(ns + query);
 
         /*
         String dbo = "http://dbpedia.org/ontology/";

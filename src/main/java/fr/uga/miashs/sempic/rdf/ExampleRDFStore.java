@@ -57,7 +57,7 @@ public class ExampleRDFStore {
         //s.cnx.load(m);
         
         // Test dbpedia
-        System.out.println("Dbpedia listPopulatedPlaces :");
+        System.out.println("\nDbpedia listPopulatedPlaces :\n");
         try {
             List<Resource> places = s.listPopulatedPlaces();
             places.forEach(p -> {
@@ -69,7 +69,7 @@ public class ExampleRDFStore {
             e.printStackTrace();
         }
         
-        System.out.println("Onthologie Depiction :\n");
+        System.out.println("\nOnthologie Depiction :\n");
         
         List<Resource> classes = s.listSubClassesOf(SempicOnto.Depiction);
         classes.forEach(c -> {System.out.println(c);});
