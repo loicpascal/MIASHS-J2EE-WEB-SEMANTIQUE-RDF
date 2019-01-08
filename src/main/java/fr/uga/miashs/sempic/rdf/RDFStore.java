@@ -35,6 +35,7 @@ public class RDFStore {
     public final static String ENDPOINT_QUERY = "http://localhost:3030/sempic/sparql"; // SPARQL endpoint
     public final static String ENDPOINT_UPDATE = "http://localhost:3030/sempic/update"; // SPARQL UPDATE endpoint
     public final static String ENDPOINT_GSP = "http://localhost:3030/sempic/data"; // Graph Store Protocol
+    public final static String ENDPOINT_DBPEDIA = "http://dbpedia.org/ontology/"; // Dbpedia
 
     protected final RDFConnection cnx;
 
@@ -127,8 +128,103 @@ public class RDFStore {
                 + "}");
         return m.listSubjects().toList();
     }
-
     
+    
+    /**
+     * Retourne tous les types Depiction
+     *
+     * @return
+     */
+    public List<Resource> listDepictionClasses() {
+        RDFStore s = new RDFStore();
+        List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
+        
+        return classes;
+    }
+    
+    /**
+     * Retourne tous les types Who
+     *
+     * @return
+     */
+    public List<Resource> listWhoDepictionClasses() {
+        RDFStore s = new RDFStore();
+        List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
+        
+        return classes;
+    }
+    
+    /**
+     * Retourne tous les types What
+     *
+     * @return
+     */
+    public List<Resource> listWhatDepictionClasses() {
+        RDFStore s = new RDFStore();
+        List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
+        
+        return classes;
+    }
+    
+    /**
+     * TODO Retourne toutes les villes françaises > 10000 habitants (dbpedia)
+     *
+     * @return
+     */
+    public List<Resource> listPopulatedPlaces() {
+        
+        String s = "CONSTRUCT {"
+         + "        ?place <" + ENDPOINT_DBPEDIA + "ontology/PopulatedPlace> ?place_name ."
+         + "   }"
+         + "   WHERE {"
+         + "           SERVICE <" + ENDPOINT_DBPEDIA + ">"
+         + "           {"
+         + "                   ?location <http://www.geonames.org/ontology#countryCode> 'FR' ."
+         + "                   ?location <http://www.geonames.org/ontology#name> ?location_name ."
+         + "                   filter( regex(str(?location), 'sws.geonames.org' ))"
+         + "           }"
+         + "   }";
+    
+        Model m = cnx.queryConstruct("CONSTRUCT { "
+            + "?s <" + RDFS.label + "> ?o "
+            + "} WHERE {"
+            + "?s <" + RDFS.subClassOf + "> <" + c.getURI() + "> ."
+            + "?s <" + RDFS.label + "> ?o ."
+            + "}");
+        
+        /*
+        String queryStr = "SELECT ?prop ?place WHERE { <http://dbpedia.org/resource/%C3%84lvdalen> ?prop ?place .}";
+        Query query = QueryFactory.create(queryStr);
+
+        // Remote execution.
+        try ( QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query) ) {
+            // Set the DBpedia specific timeout.
+            ((QueryEngineHTTP)qexec).addParam("timeout", "10000") ;
+
+            // Execute.
+            ResultSet rs = qexec.execSelect();
+            ResultSetFormatter.out(System.out, rs, query);
+        } catch (Exception e) {
+            e.printStackTrace();
+}
+        */
+        
+        return m.listSubjects().toList();
+    }
+    
+    /**
+     * TODO Retourne la listes des auteurs de photos (personnes
+     *
+     * @return
+     */
+    /*
+    public List<Resource> listAuthors() {
+        // http://dbpedia.org/ontology/PopulatedPlace
+        
+        //return classes;
+    }
+    */
+ 
     /**
      * Create a list of anonymous instances for each of the classes
      * given as parameter. The created instances have a label "a "+ label of the class.
