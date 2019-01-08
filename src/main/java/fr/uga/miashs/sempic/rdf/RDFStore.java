@@ -130,17 +130,9 @@ public class RDFStore {
                 + "}";
         Query query = QueryFactory.create(queryStr);
         Model m = cnx.queryConstruct(query);
-        /*
-        Model m = cnx.queryConstruct("CONSTRUCT { "
-                + "?s <" + RDFS.label + "> ?o "
-                + "} WHERE {"
-                + "?s <" + RDFS.subClassOf + "> <" + c.getURI() + "> ."
-                + "?s <" + RDFS.label + "> ?o ."
-                + "}");
-        */
+
         return m.listSubjects().toList();
     }
-    
     
     /**
      * Retourne tous les types Depiction
@@ -169,14 +161,73 @@ public class RDFStore {
      *
      * @return
      */
-    public List<Resource> listWhatDepictionClasses() {
-        List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
+    public List<Resource> listWhatDepictionClasses(String type) {
+        List<Resource> classes;
         
+        switch (type) {
+            case "dog":
+                  classes = this.listSubClassesOf(SempicOnto.Dog);
+                  break;
+                  
+            case "cat":
+                  classes = this.listSubClassesOf(SempicOnto.Cat);
+                  break;
+                  
+            case "monument":
+                  classes = this.listSubClassesOf(SempicOnto.Monument);  
+                  break;
+                  
+            default:
+                  classes = this.listSubClassesOf(SempicOnto.Depiction);
+        }
+
         return classes;
     }
     
     /**
-     * TODO Retourne toutes les villes françaises > 50000 habitants (dbpedia)
+     * Retourne les instances d'un type donné
+     *
+     * @param type
+     * @return
+     */
+    public List<Resource> listInstancesByType(String type) {
+        Resource rType;
+        
+        switch (type) {
+            case "dog":
+                  rType = SempicOnto.Dog;
+                  break;
+                  
+            case "cat":
+                  rType = SempicOnto.Cat;
+                  break;
+                  
+            case "monument":
+                  rType = SempicOnto.Monument; 
+                  break;
+                  
+            default:
+                  rType = SempicOnto.Depiction;
+        }
+
+        String queryStr = "CONSTRUCT { "
+                + "?s <" + RDFS.label + "> ?name "
+                + "} WHERE {"
+                + "?s a <" + rType.getURI() + "> ;"
+                +      "<" + RDFS.label + "> ?name"
+                + "}";
+        Query query = QueryFactory.create(queryStr);
+        
+        
+        System.out.println("\n Query listInstancesByType :\n" + queryStr);
+        
+        Model m = cnx.queryConstruct(query);
+
+        return m.listSubjects().toList();
+    }
+    
+    /**
+     * Retourne toutes les villes françaises > 50000 habitants (dbpedia)
      *
      * @return
      */
@@ -200,32 +251,13 @@ public class RDFStore {
             + "           FILTER (?population > 50000)"
             + "   }"
             + "   order by ?place_name";
-
-        //cnx.addParam("timeout", "10000") ;
         
         
         Query q = QueryFactory.create(ns + query);
         Model m = cnx.queryConstruct(q); 
         
-        
-        //Model m = cnx.queryConstruct(ns + query);
-
-        /*
-        String dbo = "http://dbpedia.org/ontology/";
-        String dbr = "http://fr.dbpedia.org/resource/";
-        String foaf = "http://xmlns.com/foaf/0.1/";
-
-        m.setNsPrefix( "dbo", dbo );
-        m.setNsPrefix( "dbr", dbr );
-        m.setNsPrefix( "foaf", foaf );
-        */
-
-        
         return m.listSubjects().toList();
 
-
-       
-        
     }
     
     
@@ -266,26 +298,7 @@ public class RDFStore {
         
     }
     /*
-    
-/*    
-    public String getCities() {
-        // Test dbpedia
-        List<
-        try {
-            List<Resource> places = this.listPopulatedPlaces();
-            places.forEach(p -> {
-                System.out.println(p);
-            });
-        } catch (QueryParseException qpe) {
-            qpe.printStackTrace();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        
-        return m.listSubjects().toList();
-    }
-    */
-    
+
     
     /**
      * TODO Retourne la listes des auteurs de photos (personnes
