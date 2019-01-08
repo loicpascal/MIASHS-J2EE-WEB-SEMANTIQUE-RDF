@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
@@ -20,6 +20,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.sparql.modify.request.QuadAcc;
 import org.apache.jena.sparql.modify.request.UpdateDeleteWhere;
 import org.apache.jena.update.Update;
@@ -35,7 +36,7 @@ public class RDFStore {
     public final static String ENDPOINT_QUERY = "http://localhost:3030/sempic/sparql"; // SPARQL endpoint
     public final static String ENDPOINT_UPDATE = "http://localhost:3030/sempic/update"; // SPARQL UPDATE endpoint
     public final static String ENDPOINT_GSP = "http://localhost:3030/sempic/data"; // Graph Store Protocol
-    public final static String ENDPOINT_DBPEDIA = "http://dbpedia.org/ontology/"; // Dbpedia
+    public final static String ENDPOINT_DBPEDIA = "http://fr.dbpedia.org/sparql"; // Dbpedia
 
     protected final RDFConnection cnx;
 
@@ -136,7 +137,6 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listDepictionClasses() {
-        RDFStore s = new RDFStore();
         List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
         
         return classes;
@@ -148,7 +148,6 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listWhoDepictionClasses() {
-        RDFStore s = new RDFStore();
         List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
         
         return classes;
@@ -160,39 +159,73 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listWhatDepictionClasses() {
-        RDFStore s = new RDFStore();
         List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
         
         return classes;
     }
     
     /**
-     * TODO Retourne toutes les villes françaises > 10000 habitants (dbpedia)
+     * TODO Retourne toutes les villes françaises > 50000 habitants (dbpedia)
      *
      * @return
      */
-    public List<Resource> listPopulatedPlaces() {
+    public List<Resource> listPopulatedPlaces()  {
+
+        String ns = "PREFIX dbo: " + Namespaces.dbo
+            + "PREFIX dbr: " + Namespaces.dbr
+            + "PREFIX foaf: " + Namespaces.foaf;
+
+        String query = "CONSTRUCT {"
+            + "        ?place foaf:name ?place_name"
+            + "   }"
+            + "   WHERE {"
+            + "           SERVICE <" + ENDPOINT_DBPEDIA + ">"
+            + "           {"
+            + "                   ?place dbo:country dbr:France ."
+            + "                   ?place foaf:name ?place_name ."
+            + "                   ?place a dbo:PopulatedPlace. "
+            + "                   ?place dbo:populationTotal ?population ."
+            + "           }"
+            + "           FILTER (?population > 50000)"
+            + "   }"
+            + "   order by ?place_name";
+
+        //cnx.addParam("timeout", "10000") ;
         
-        String s = "CONSTRUCT {"
-         + "        ?place <" + ENDPOINT_DBPEDIA + "ontology/PopulatedPlace> ?place_name ."
-         + "   }"
-         + "   WHERE {"
-         + "           SERVICE <" + ENDPOINT_DBPEDIA + ">"
-         + "           {"
-         + "                   ?location <http://www.geonames.org/ontology#countryCode> 'FR' ."
-         + "                   ?location <http://www.geonames.org/ontology#name> ?location_name ."
-         + "                   filter( regex(str(?location), 'sws.geonames.org' ))"
-         + "           }"
-         + "   }";
-    
-        Model m = cnx.queryConstruct("CONSTRUCT { "
-            + "?s <" + RDFS.label + "> ?o "
-            + "} WHERE {"
-            + "?s <" + RDFS.subClassOf + "> <" + c.getURI() + "> ."
-            + "?s <" + RDFS.label + "> ?o ."
-            + "}");
-        
+        Model m = cnx.queryConstruct(ns + query);
+
         /*
+        String dbo = "http://dbpedia.org/ontology/";
+        String dbr = "http://fr.dbpedia.org/resource/";
+        String foaf = "http://xmlns.com/foaf/0.1/";
+
+        m.setNsPrefix( "dbo", dbo );
+        m.setNsPrefix( "dbr", dbr );
+        m.setNsPrefix( "foaf", foaf );
+        */
+
+        
+        return m.listSubjects().toList();
+
+
+       
+        
+    }
+    
+    
+    
+    
+    
+    /**
+     * TODO Retourne toutes les villes françaises > 50000 habitants (dbpedia)
+     *
+     * @return
+     */
+    /*
+    public List<Resource> listPopulatedPlacesQuery()  {
+        
+
+        
         String queryStr = "SELECT ?prop ?place WHERE { <http://dbpedia.org/resource/%C3%84lvdalen> ?prop ?place .}";
         Query query = QueryFactory.create(queryStr);
 
@@ -206,11 +239,37 @@ public class RDFStore {
             ResultSetFormatter.out(System.out, rs, query);
         } catch (Exception e) {
             e.printStackTrace();
-}
-        */
+        }
+        
+
+        
+        return m.listSubjects().toList();
+
+
+       
+        
+    }
+    /*
+    
+/*    
+    public String getCities() {
+        // Test dbpedia
+        List<
+        try {
+            List<Resource> places = this.listPopulatedPlaces();
+            places.forEach(p -> {
+                System.out.println(p);
+            });
+        } catch (QueryParseException qpe) {
+            qpe.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         
         return m.listSubjects().toList();
     }
+    */
+    
     
     /**
      * TODO Retourne la listes des auteurs de photos (personnes
