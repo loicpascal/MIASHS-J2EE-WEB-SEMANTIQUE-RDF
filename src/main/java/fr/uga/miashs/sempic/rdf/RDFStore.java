@@ -15,6 +15,7 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
@@ -108,6 +109,10 @@ public class RDFStore {
         }
         return r.asNode();
     }
+    
+    private void debug(String s, Object o) {
+        System.out.println("\n\n" + s + " :\n" + o);
+    }
 
     /**
      * Delete all the statements where the resource appears as subject or object
@@ -170,26 +175,11 @@ public class RDFStore {
      *
      * @return
      */
-    public List<Resource> listWhatDepictionClasses(String type) {
+    public List<Resource> listWhatDepictionClasses() {
         List<Resource> classes;
-        
-        switch (type) {
-            case "dog":
-                  classes = this.listSubClassesOf(SempicOnto.Dog);
-                  break;
-                  
-            case "cat":
-                  classes = this.listSubClassesOf(SempicOnto.Cat);
-                  break;
-                  
-            case "monument":
-                  classes = this.listSubClassesOf(SempicOnto.Monument);  
-                  break;
-                  
-            default:
-                  classes = this.listSubClassesOf(SempicOnto.Depiction);
-        }
-
+   
+        classes = this.listSubClassesOf(SempicOnto.Depiction);
+      
         return classes;
     }
     
@@ -227,13 +217,14 @@ public class RDFStore {
                 + "}";
         Query query = QueryFactory.create(queryStr);
         
-        
-        System.out.println("\n Query listInstancesByType :\n" + queryStr);
-        
+        debug("Query listInstancesByType", queryStr);
+
         Model m = cnx.queryConstruct(query);
 
         return m.listSubjects().toList();
     }
+    
+
     
     /**
      * Retourne toutes les villes françaises > 50000 habitants (dbpedia)
@@ -268,47 +259,7 @@ public class RDFStore {
         return m.listSubjects().toList();
 
     }
-    
-    
-    
-    
-    
-    /**
-     * TODO Retourne toutes les villes françaises > 50000 habitants (dbpedia)
-     *
-     * @return
-     */
-    /*
-    public List<Resource> listPopulatedPlacesQuery()  {
-        
 
-        
-        String queryStr = "SELECT ?prop ?place WHERE { <http://dbpedia.org/resource/%C3%84lvdalen> ?prop ?place .}";
-        Query query = QueryFactory.create(queryStr);
-
-        // Remote execution.
-        try ( QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query) ) {
-            // Set the DBpedia specific timeout.
-            ((QueryEngineHTTP)qexec).addParam("timeout", "10000") ;
-
-            // Execute.
-            ResultSet rs = qexec.execSelect();
-            ResultSetFormatter.out(System.out, rs, query);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-
-        
-        return m.listSubjects().toList();
-
-
-       
-        
-    }
-    /*
-
-    
     /**
      * TODO Retourne la listes des auteurs de photos (personnes
      *
@@ -338,14 +289,87 @@ public class RDFStore {
         }
         return res;
     }
-
     
+    /**
+     * Crée une annotation avec une propriété objet
+     *
+     * @param r
+     * @param p
+     * @param c
+     * @return
+     */
+    public Resource createAnnotation(Resource r, String p, Resource c) {
+        Model m = ModelFactory.createDefaultModel();
+        Property rProp;
+        
+        switch (p) {
+            case "depicts":
+                rProp = SempicOnto.depicts;
+                break;
+
+            case "takenBy":
+                rProp = SempicOnto.takenBy;
+                break;
+                  
+            case "takenIn":
+                rProp = SempicOnto.takenIn; 
+                break;
+                  
+            default:
+                rProp = SempicOnto.depicts;
+        }
+        
+        m.add(r, rProp, c);
+        this.saveModel(m);
+        
+        return r;
+    }
+    
+    
+    /**
+     * Crée une annotation avec une propriété data
+     *
+     * @param r
+     * @param p
+     * @param l
+     * @return
+     */
+    public Resource createAnnotation(Resource r, String p, String l) {
+        Model m = ModelFactory.createDefaultModel();
+        Property rProp;
+        
+        switch (p) {
+            case "takenAt":
+                rProp = SempicOnto.takenAt;
+                break;
+                  
+            default:
+                rProp = SempicOnto.takenAt;
+        }
+        
+        r.addLiteral(rProp, l);
+        
+        this.saveModel(m);
+        
+        return r;
+    }
+
+    /**
+     * Crée une photo
+     * 
+     * @param photoId
+     * @param albumId
+     * @param ownerId
+     * @return 
+     */
     public Resource createPhoto(long photoId, long albumId, long ownerId) {
         // create an empty RDF graph
         Model m = ModelFactory.createDefaultModel();
         // create an instance of Photo in Model m
         Resource pRes = m.createResource(Namespaces.getPhotoUri(photoId), SempicOnto.Photo);
 
+        // TODO Add ownerId
+        
         pRes.addLiteral(SempicOnto.albumId, albumId);
         pRes.addLiteral(SempicOnto.ownerId, ownerId);
 

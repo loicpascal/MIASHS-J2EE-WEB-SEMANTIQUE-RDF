@@ -35,16 +35,6 @@ public class ExampleRDFStore {
         newPerson1.addLiteral(RDFS.label, "Manuel");
         m.write(System.out, "turtle");
  
-        Resource newPerson = m.createResource(SempicOnto.Person);
-        newPerson.addLiteral(RDFS.label, "Meme");
-        //m.write(System.out, "turtle");
-
-        Resource newDog = m.createResource(SempicOnto.Dog);
-        newDog.addLiteral(RDFS.label, "Medor");
-        m.add(pRes1, SempicOnto.depicts, newDog);
-        m.add(newPerson, SempicOnto.owns, newDog);
-        //m.write(System.out, "turtle");
-
         Resource newPerson2 = m.createResource(SempicOnto.Male);
         newPerson2.addLiteral(RDFS.label, "Jérome");
         m.write(System.out, "turtle");
@@ -76,22 +66,15 @@ public class ExampleRDFStore {
         
         Resource newCat = m.createResource(SempicOnto.Cat);
         newCat.addLiteral(RDFS.label, "Felix");
-		
-        m.add(pRes2, SempicOnto.depicts, newCat);
-        m.add(newPerson, SempicOnto.owns, newCat);
-        */
-        
-        Resource newDog = m.createResource(Namespaces.resNS + "Tika", SempicOnto.Dog);
-        newDog.addLiteral(RDFS.label, "Tika");
-
-        //m.write(System.out, "turtle");
-
-        s.saveModel(m);
-        
-
         m.add(newPerson2, SempicOnto.owns, newCat);
         m.write(System.out, "turtle");
+        
+        
+        Resource tika = m.createResource(Namespaces.resNS + "Tika", SempicOnto.Dog);
+        tika.addLiteral(RDFS.label, "Tika");
+        //m.write(System.out, "turtle");
 
+        
         Resource newEvent1 = m.createResource(SempicOnto.Event);
         newEvent1.addLiteral(RDFS.label, "Anniversaire");
         m.write(System.out, "turtle");
