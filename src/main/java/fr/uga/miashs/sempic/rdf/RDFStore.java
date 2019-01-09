@@ -6,6 +6,7 @@ package fr.uga.miashs.sempic.rdf;
 
 import fr.uga.miashs.sempic.model.rdf.SempicOnto;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,12 +242,10 @@ public class RDFStore {
         return m.listSubjects().toList();
     }
     
-
     /**
      * Enregistre dans une base locale toutes les villes françaises > 50000 habitants (dbpedia)
      */
     public void createPopulatedPlaces()  {
-
         String ns = "PREFIX dbo: <" + Namespaces.dbo + ">"
             + "PREFIX dbr: <" + Namespaces.dbr + ">"
             + "PREFIX foaf: <" + Namespaces.foaf + ">";
@@ -279,28 +278,26 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listPopulatedPlaces()  {
-
-        String ns = "PREFIX dbo: <" + Namespaces.dbo + ">"
-            + "PREFIX dbr: <" + Namespaces.dbr + ">"
-            + "PREFIX foaf: <" + Namespaces.foaf + ">";
-
         String query = "CONSTRUCT {"
             + "       ?place ?prop ?name"
             + "   }"
             + "   WHERE {"
             + "       ?place ?prop ?name"
             + "   }"
-            + "   order by ?place_name";
+            + "   order by ?name";
         
-        
-        Query q = QueryFactory.create(ns + query);
+        Query q = QueryFactory.create(query);
         
         Model m = cnxDbpedia.queryConstruct(q); 
         
-        this.saveModelDbpedia(m);
-  
-        return m.listSubjects().toList();
+        /*
+        cities.sort(String.CASE_INSENSITIVE_ORDER);
+        cities.sort(Comparator.naturalOrder());
+        */
+        
+        List<Resource> places = m.listSubjects().toList();
 
+        return places;
     }
 
     /**

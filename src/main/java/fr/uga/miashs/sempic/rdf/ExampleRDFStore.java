@@ -107,20 +107,7 @@ public class ExampleRDFStore {
         //s.deleteModel(m);
         //s.cnx.load(m);
         
-        // Test dbpedia
-        /*
-        System.out.println("\nDbpedia listPopulatedPlaces :\n");
-        try {
-            List<Resource> places = s.listPopulatedPlaces();
-            places.forEach(p -> {
-                System.out.println(p);
-            });
-        } catch (QueryParseException qpe) {
-            qpe.printStackTrace();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        */
+ 
         System.out.println("\n\nOnthologie Depiction :\n");
         
         List<Resource> classes = s.listSubClassesOf(SempicOnto.Depiction);
@@ -142,6 +129,23 @@ public class ExampleRDFStore {
     */
         s.cleanAllResource();
         s.createPopulatedPlaces();
+        
+        
+        
+        // Test dbpedia
+        System.out.println("\nDbpedia listPopulatedPlaces :\n");
+        try {
+            List<Resource> places = s.listPopulatedPlaces();
+            places.forEach(p -> {
+                System.out.println(p);
+            });
+        } catch (QueryParseException qpe) {
+            qpe.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+  
         
 //
 //        List<Resource> instances = s.createAnonInstances(classes);
