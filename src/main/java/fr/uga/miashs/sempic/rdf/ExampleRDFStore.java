@@ -22,14 +22,9 @@ public class ExampleRDFStore {
     public static void main(String[] args) {
         RDFStore s = new RDFStore();
 
-        s.cleanAllResource();
+        //s.cleanAllResource();
 
         Model m = ModelFactory.createDefaultModel();
-
-        /*
-        Resource pRes1 = s.createPhoto(1, 1, 1);
-        Resource pRes2 = s.createPhoto(2, 1, 1);
-        */
 
         Resource newPerson1 = m.createResource(Namespaces.resNS + "Manuel", SempicOnto.Male);
         newPerson1.addLiteral(RDFS.label, "Manuel");
@@ -98,12 +93,9 @@ public class ExampleRDFStore {
         Resource newNature2 = m.createResource(Namespaces.resNS + "Plage", SempicOnto.Nature);
         newNature2.addLiteral(RDFS.label, "Plage");
         m.write(System.out, "turtle");
-
+        
         s.saveModel(m);
-        
 
-    
-        
         //s.deleteModel(m);
         //s.cnx.load(m);
         
@@ -119,19 +111,24 @@ public class ExampleRDFStore {
         List<Resource> res = s.listInstancesByType("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Dog");
         res.forEach(r -> {System.out.println(r);});
         
-        /*
+        System.out.println("\n\n Photos :\n");
+        
         Resource pRes1 = s.createPhoto(1, 1, 1);
-        //Resource pRes2 = s.createPhoto(2, 1, 1);
         
         s.createAnnotationObject(1, SempicOnto.depicts.getURI(), tika.getURI());
         s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
         s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbr + "Grenoble");
-    */
+        
+        List<Resource> resDepict = s.getPhotoDepictions(1);
+        resDepict.forEach(r -> {System.out.println(r);});
+      
+     
         // TODO cleanAllResource : séparer data et dbpedia
-        s.cleanAllResourceDbpedia();
-        s.createPopulatedPlaces();
+        //s.cleanAllResourceDbpedia();
+        //s.createPopulatedPlaces();
   
         // Test dbpedia
+        /*
         System.out.println("\nDbpedia listPopulatedPlaces :\n");
         try {
             List<Resource> places = s.listPopulatedPlaces();
@@ -143,7 +140,7 @@ public class ExampleRDFStore {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        
+        */
   
         
 //

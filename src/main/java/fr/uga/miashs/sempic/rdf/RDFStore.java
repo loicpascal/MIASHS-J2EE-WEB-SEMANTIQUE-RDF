@@ -158,6 +158,8 @@ public class RDFStore {
     }
     
     /**
+     * TODO fonction qui nettoie toutes les annotations (mais pas les photos)
+     * 
     * Delete all the statements where the resource appears as subject and property uri appears as property
     * @param r The named resource to be deleted (the resource cannot be annonymous)
     */
@@ -332,6 +334,7 @@ public class RDFStore {
             instance.addLiteral(RDFS.label, "a " + c.getProperty(RDFS.label).getLiteral());
             res.add(instance);
         }
+        
         return res;
     }
     
@@ -358,7 +361,7 @@ public class RDFStore {
         
         //debug("photo", photo);debug("Property", prop);debug("object", object);
         
-        m.write(System.out, "turtle");
+        //m.write(System.out, "turtle");
         
         return photo;
     }
@@ -410,11 +413,52 @@ public class RDFStore {
     }
 
     /**
+     * Liste des annotations "depicts" d'une photo
+     *
+     * @param id
+     * @return
+     */
+    public List<Resource> getPhotoDepictions(long id) {
+        String pUri = Namespaces.getPhotoUri(id);
+
+        String s = "CONSTRUCT {"
+                + "    ?o <" + RDFS.label + "> ?name "
+                + "} "
+                + "WHERE { "
+                + "    <" + pUri + "> <" + SempicOnto.depicts + "> ?o . "
+                + "    ?o <" + RDFS.label + "> ?name"
+                + "}";
+        Model m = cnx.queryConstruct(s);
+ 
+        return m.listSubjects().toList();
+        
+    }
+    
+    /**
+     * A virer ?
+     *
+     * @param id
+     * @return
+     */
+    public Resource getPhotoObjectByProperty(long id, String pUri) {
+        String photoUri = Namespaces.getPhotoUri(id);
+
+        String s = "CONSTRUCT {"
+                + "<" + photoUri + "> <" + pUri + "> ?o . "
+                + "} "
+                + "WHERE { "
+                + "<" + photoUri + "> <" + pUri + "> ?o . "
+                + "}";
+        Model m = cnx.queryConstruct(s);
+        
+        return m.getResource(pUri);
+    }
+    
+    /**
      * Query a Photo and retrieve all the direct properties of the photo and if
      * the property are depic, takenIn or takenBy, it also retrieve the labels
      * of the object of these properties
      * 
-     * TODO Liste des annotations d’une photo
      *
      * @param id
      * @return
@@ -436,6 +480,7 @@ public class RDFStore {
                 + "}"
                 + "}";
         Model m = cnx.queryConstruct(s);
+        
         return m.getResource(pUri);
     }
 
