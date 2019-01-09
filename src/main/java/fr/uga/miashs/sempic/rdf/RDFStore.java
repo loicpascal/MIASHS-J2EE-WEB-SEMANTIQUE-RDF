@@ -45,6 +45,15 @@ public class RDFStore {
     }
 
     /**
+     * Clean all resource before reinsert them
+     */
+    public void cleanAllResource() {
+        cnx.begin(ReadWrite.WRITE);
+        cnx.update("DELETE WHERE { ?s ?p ?o }");
+        cnx.commit();
+    }
+
+    /**
      * Save the given model into the triple store.
      * @param m THe Jena model to be persisted
      */
