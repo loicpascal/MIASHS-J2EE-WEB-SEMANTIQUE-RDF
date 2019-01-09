@@ -46,25 +46,25 @@ public class ExampleRDFStore {
         m.write(System.out, "turtle");
 
         // Daniel père de Jérome et Julie
-        Resource newPerson4 = m.createResource(SempicOnto.Male);
+        Resource newPerson4 = m.createResource(Namespaces.resNS + "Daniel", SempicOnto.Male);
         newPerson4.addLiteral(RDFS.label, "Daniel");
         m.add(newPerson4, SempicOnto.hasDaughter, newPerson3);
         m.add(newPerson4, SempicOnto.hasSon, newPerson2);
         m.write(System.out, "turtle");
 
         // Fatima mère de Daniel donc grand mère de Jérome et Julie
-        Resource newPerson5 = m.createResource(SempicOnto.Male);
+        Resource newPerson5 = m.createResource(Namespaces.resNS + "Fatima", SempicOnto.Male);
         newPerson5.addLiteral(RDFS.label, "Fatima");
         m.add(newPerson5, SempicOnto.hasSon, newPerson4);
         m.write(System.out, "turtle");
 
-        Resource newDog = m.createResource(SempicOnto.Dog);
+        Resource newDog = m.createResource(Namespaces.resNS + "Medor", SempicOnto.Dog);
         newDog.addLiteral(RDFS.label, "Medor");
         m.add(newPerson1, SempicOnto.owns, newDog);
         m.write(System.out, "turtle");
 
         
-        Resource newCat = m.createResource(SempicOnto.Cat);
+        Resource newCat = m.createResource(Namespaces.resNS + "Felix", SempicOnto.Cat);
         newCat.addLiteral(RDFS.label, "Felix");
         m.add(newPerson2, SempicOnto.owns, newCat);
         m.write(System.out, "turtle");
@@ -75,27 +75,27 @@ public class ExampleRDFStore {
         //m.write(System.out, "turtle");
 
         
-        Resource newEvent1 = m.createResource(SempicOnto.Event);
+        Resource newEvent1 = m.createResource(Namespaces.resNS + "Anniversaire", SempicOnto.Event);
         newEvent1.addLiteral(RDFS.label, "Anniversaire");
         m.write(System.out, "turtle");
 
-        Resource newEvent2 = m.createResource(SempicOnto.Event);
+        Resource newEvent2 = m.createResource(Namespaces.resNS + "Cremaillere", SempicOnto.Event);
         newEvent2.addLiteral(RDFS.label, "Crémaillère");
         m.write(System.out, "turtle");
 
-        Resource newEvent3 = m.createResource(SempicOnto.Event);
+        Resource newEvent3 = m.createResource(Namespaces.resNS + "PotDepart", SempicOnto.Event);
         newEvent3.addLiteral(RDFS.label, "Pôt de départ");
         m.write(System.out, "turtle");
 
-        Resource newMonument = m.createResource(SempicOnto.Monument);
+        Resource newMonument = m.createResource(Namespaces.resNS + "TourEiffel", SempicOnto.Monument);
         newMonument.addLiteral(RDFS.label, "Tour Eiffel");
         m.write(System.out, "turtle");
 
-        Resource newNature1 = m.createResource(SempicOnto.Nature);
+        Resource newNature1 = m.createResource(Namespaces.resNS + "Montagne", SempicOnto.Nature);
         newNature1.addLiteral(RDFS.label, "Montagne");
         m.write(System.out, "turtle");
 
-        Resource newNature2 = m.createResource(SempicOnto.Nature);
+        Resource newNature2 = m.createResource(Namespaces.resNS + "Plage", SempicOnto.Nature);
         newNature2.addLiteral(RDFS.label, "Plage");
         m.write(System.out, "turtle");
 
@@ -121,17 +121,29 @@ public class ExampleRDFStore {
             e.printStackTrace();
         }
         */
-        System.out.println("\nOnthologie Depiction :\n");
+        System.out.println("\n\nOnthologie Depiction :\n");
         
         List<Resource> classes = s.listSubClassesOf(SempicOnto.Depiction);
         classes.forEach(c -> {System.out.println(c);});
         
 
-        System.out.println("\n Instances dog :\n");
+        System.out.println("\n\n Instances dog :\n");
         
-        List<Resource> res = s.listInstancesByType("dog");
+        List<Resource> res = s.listInstancesByType("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Dog");
         res.forEach(r -> {System.out.println(r);});
         
+        Resource pRes1 = s.createPhoto(1, 1, 1);
+        //Resource pRes2 = s.createPhoto(2, 1, 1);
+        
+        s.createAnnotationObject(1, SempicOnto.depicts.getURI(), tika.getURI());
+        s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
+        
+        Resource r = s.readPhoto(1);
+        //System.out.println(r);
+        //List<Resource> res = s.listInstancesByType("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Dog");
+        //res.forEach(r -> {System.out.println(r);});
+        
+        //m.write(System.out, "turtle");
         
         
         

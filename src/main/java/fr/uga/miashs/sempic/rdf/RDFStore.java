@@ -39,6 +39,8 @@ public class RDFStore {
     public final static String ENDPOINT_GSP = "http://localhost:3030/sempic/data"; // Graph Store Protocol
     public final static String ENDPOINT_DBPEDIA = "http://fr.dbpedia.org/sparql"; // Dbpedia
 
+    //public final static HashMap<Resource, Var> mapClasse = new HashMap<>();
+    
     protected final RDFConnection cnx;
 
     public RDFStore() {
@@ -177,7 +179,6 @@ public class RDFStore {
      */
     public List<Resource> listWhatDepictionClasses() {
         List<Resource> classes;
-   
         classes = this.listSubClassesOf(SempicOnto.Depiction);
       
         return classes;
@@ -186,33 +187,14 @@ public class RDFStore {
     /**
      * Retourne les instances d'un type donné
      *
-     * @param type
+     * @param typeUri
      * @return
      */
-    public List<Resource> listInstancesByType(String type) {
-        Resource rType;
-        
-        switch (type) {
-            case "dog":
-                  rType = SempicOnto.Dog;
-                  break;
-                  
-            case "cat":
-                  rType = SempicOnto.Cat;
-                  break;
-                  
-            case "monument":
-                  rType = SempicOnto.Monument; 
-                  break;
-                  
-            default:
-                  rType = SempicOnto.Depiction;
-        }
-
+    public List<Resource> listInstancesByType(String typeUri) {
         String queryStr = "CONSTRUCT { "
                 + "?s <" + RDFS.label + "> ?name "
                 + "} WHERE {"
-                + "?s a <" + rType.getURI() + "> ;"
+                + "?s a <" + typeUri + "> ;"
                 +      "<" + RDFS.label + "> ?name"
                 + "}";
         Query query = QueryFactory.create(queryStr);
@@ -225,7 +207,6 @@ public class RDFStore {
     }
     
 
-    
     /**
      * Retourne toutes les villes françaises > 50000 habitants (dbpedia)
      *
@@ -261,7 +242,7 @@ public class RDFStore {
     }
 
     /**
-     * TODO Retourne la listes des auteurs de photos (personnes
+     * TODO Retourne la liste des auteurs de photos (personnes
      *
      * @return
      */
@@ -292,66 +273,54 @@ public class RDFStore {
     
     /**
      * Crée une annotation avec une propriété objet
+     * 
+     * TODO gérer exeption si uri inconnue ?
      *
-     * @param r
-     * @param p
-     * @param c
+     * @param photoId
+     * @param pUri
+     * @param oUri
      * @return
      */
-    public Resource createAnnotation(Resource r, String p, Resource c) {
+    public Resource createAnnotationObject(long photoId, String pUri, String oUri) {
         Model m = ModelFactory.createDefaultModel();
-        Property rProp;
-        
-        switch (p) {
-            case "depicts":
-                rProp = SempicOnto.depicts;
-                break;
 
-            case "takenBy":
-                rProp = SempicOnto.takenBy;
-                break;
-                  
-            case "takenIn":
-                rProp = SempicOnto.takenIn; 
-                break;
-                  
-            default:
-                rProp = SempicOnto.depicts;
-        }
+        String photoUri = Namespaces.getPhotoUri(photoId);
+        Resource photo = m.getResource(photoUri);
+        Property prop = m.getProperty(pUri);
+        Resource object = m.getResource(oUri);
         
-        m.add(r, rProp, c);
+        m.add(photo, prop, object);
         this.saveModel(m);
         
-        return r;
+        //debug("photo", photo);debug("Property", prop);debug("object", object);
+        
+        m.write(System.out, "turtle");
+        
+        return photo;
     }
     
     
     /**
      * Crée une annotation avec une propriété data
      *
-     * @param r
-     * @param p
+     * TODO gérer exeption si uri inconnue ?
+     * 
+     * @param photoId
+     * @param pUri
      * @param l
      * @return
      */
-    public Resource createAnnotation(Resource r, String p, String l) {
+    public Resource createAnnotationData(long photoId, String pUri, String l) {
         Model m = ModelFactory.createDefaultModel();
-        Property rProp;
         
-        switch (p) {
-            case "takenAt":
-                rProp = SempicOnto.takenAt;
-                break;
-                  
-            default:
-                rProp = SempicOnto.takenAt;
-        }
+        String photoUri = Namespaces.getPhotoUri(photoId);
+        Resource photo = m.getResource(photoUri);
+        Property prop = m.getProperty(pUri);
         
-        r.addLiteral(rProp, l);
-        
+        photo.addLiteral(prop, l);
         this.saveModel(m);
         
-        return r;
+        return photo;
     }
 
     /**
