@@ -30,7 +30,7 @@ public class ExampleRDFStore {
         Resource pRes1 = s.createPhoto(1, 1, 1);
         Resource pRes2 = s.createPhoto(2, 1, 1);
         */
-
+/*
         Resource newPerson1 = m.createResource(SempicOnto.Male);
         newPerson1.addLiteral(RDFS.label, "Manuel");
         m.write(System.out, "turtle");
@@ -100,7 +100,7 @@ public class ExampleRDFStore {
         m.write(System.out, "turtle");
 
         s.saveModel(m);
-        
+        */
 
     
         
@@ -132,21 +132,16 @@ public class ExampleRDFStore {
         List<Resource> res = s.listInstancesByType("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Dog");
         res.forEach(r -> {System.out.println(r);});
         
+        /*
         Resource pRes1 = s.createPhoto(1, 1, 1);
         //Resource pRes2 = s.createPhoto(2, 1, 1);
         
         s.createAnnotationObject(1, SempicOnto.depicts.getURI(), tika.getURI());
         s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
-        
-        Resource r = s.readPhoto(1);
-        //System.out.println(r);
-        //List<Resource> res = s.listInstancesByType("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Dog");
-        //res.forEach(r -> {System.out.println(r);});
-        
-        //m.write(System.out, "turtle");
-        
-        
-        
+        s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbr + "Grenoble");
+    */
+        s.cleanAllResource();
+        s.createPopulatedPlaces();
         
 //
 //        List<Resource> instances = s.createAnonInstances(classes);

@@ -34,17 +34,25 @@ import org.apache.jena.vocabulary.RDFS;
 @Stateless
 public class RDFStore {
 
+    // Endpoints base sempic
     public final static String ENDPOINT_QUERY = "http://localhost:3030/sempic/sparql"; // SPARQL endpoint
     public final static String ENDPOINT_UPDATE = "http://localhost:3030/sempic/update"; // SPARQL UPDATE endpoint
     public final static String ENDPOINT_GSP = "http://localhost:3030/sempic/data"; // Graph Store Protocol
-    public final static String ENDPOINT_DBPEDIA = "http://fr.dbpedia.org/sparql"; // Dbpedia
-
-    //public final static HashMap<Resource, Var> mapClasse = new HashMap<>();
     
-    protected final RDFConnection cnx;
+    // Endpoints base sempic-dbpedia
+    public final static String ENDPOINT_DBPEDIA_QUERY = "http://localhost:3030/sempic-dbpedia/sparql"; // SPARQL endpoint
+    public final static String ENDPOINT_DBPEDIA_UPDATE = "http://localhost:3030/sempic-dbpedia/update"; // SPARQL UPDATE endpoint
+    public final static String ENDPOINT_DBPEDIA_GSP = "http://localhost:3030/sempic-dbpedia/data"; // Graph Store Protocol
+    
+     // Endpoint fr.dbpedia
+    public final static String ENDPOINT_DBPEDIA = "http://fr.dbpedia.org/sparql";
+    
+    protected final RDFConnection cnx; // base sempic
+    protected final RDFConnection cnxDbpedia; // base sempic-dbpedia
 
     public RDFStore() {
         cnx = RDFConnectionFactory.connect(ENDPOINT_QUERY, ENDPOINT_UPDATE, ENDPOINT_GSP);
+        cnxDbpedia = RDFConnectionFactory.connect(ENDPOINT_DBPEDIA_QUERY, ENDPOINT_DBPEDIA_UPDATE, ENDPOINT_DBPEDIA_GSP);
     }
 
     /**
@@ -54,6 +62,10 @@ public class RDFStore {
         cnx.begin(ReadWrite.WRITE);
         cnx.update("DELETE WHERE { ?s ?p ?o }");
         cnx.commit();
+        
+        cnxDbpedia.begin(ReadWrite.WRITE);
+        cnxDbpedia.update("DELETE WHERE { ?s ?p ?o }");
+        cnxDbpedia.commit();
     }
 
     /**
@@ -64,6 +76,16 @@ public class RDFStore {
         cnx.begin(ReadWrite.WRITE);
         cnx.load(m);
         cnx.commit();
+    }
+    
+    /**
+     * Save the given model into the triple store.
+     * @param m THe Jena model to be persisted
+     */
+    public void saveModelDbpedia(Model m) {
+        cnxDbpedia.begin(ReadWrite.WRITE);
+        cnxDbpedia.load(m);
+        cnxDbpedia.commit();
     }
 
     /**
@@ -128,6 +150,19 @@ public class RDFStore {
             cnx.commit();
         }
     }
+    
+    /**
+    * Delete all the statements where the resource appears as subject and property uri appears as property
+    * @param r The named resource to be deleted (the resource cannot be annonymous)
+    */
+
+   public void deleteResource(Resource r, String pURI) {
+       if (r.isURIResource()) {
+           cnx.begin(ReadWrite.WRITE);
+           cnx.update("DELETE WHERE { <" + r.getURI() + "> <" + pURI + "> ?o }");
+           cnx.commit();
+       }
+   }
 
     /**
      * Retieves all the resources that are subclasses of resource c. To be
@@ -208,15 +243,13 @@ public class RDFStore {
     
 
     /**
-     * Retourne toutes les villes françaises > 50000 habitants (dbpedia)
-     *
-     * @return
+     * Enregistre dans une base locale toutes les villes françaises > 50000 habitants (dbpedia)
      */
-    public List<Resource> listPopulatedPlaces()  {
+    public void createPopulatedPlaces()  {
 
-        String ns = "PREFIX dbo: " + Namespaces.dbo
-            + "PREFIX dbr: " + Namespaces.dbr
-            + "PREFIX foaf: " + Namespaces.foaf;
+        String ns = "PREFIX dbo: <" + Namespaces.dbo + ">"
+            + "PREFIX dbr: <" + Namespaces.dbr + ">"
+            + "PREFIX foaf: <" + Namespaces.foaf + ">";
 
         String query = "CONSTRUCT {"
             + "        ?place foaf:name ?place_name"
@@ -233,10 +266,39 @@ public class RDFStore {
             + "   }"
             + "   order by ?place_name";
         
+        Query q = QueryFactory.create(ns + query);
+        
+        Model m = cnxDbpedia.queryConstruct(q); 
+        
+        this.saveModelDbpedia(m);
+    }
+    
+    /**
+     * Retourne toutes les villes françaises > 50000 habitants
+     *
+     * @return
+     */
+    public List<Resource> listPopulatedPlaces()  {
+
+        String ns = "PREFIX dbo: <" + Namespaces.dbo + ">"
+            + "PREFIX dbr: <" + Namespaces.dbr + ">"
+            + "PREFIX foaf: <" + Namespaces.foaf + ">";
+
+        String query = "CONSTRUCT {"
+            + "       ?place ?prop ?name"
+            + "   }"
+            + "   WHERE {"
+            + "       ?place ?prop ?name"
+            + "   }"
+            + "   order by ?place_name";
+        
         
         Query q = QueryFactory.create(ns + query);
-        Model m = cnx.queryConstruct(q); 
         
+        Model m = cnxDbpedia.queryConstruct(q); 
+        
+        this.saveModelDbpedia(m);
+  
         return m.listSubjects().toList();
 
     }
@@ -337,8 +399,6 @@ public class RDFStore {
         // create an instance of Photo in Model m
         Resource pRes = m.createResource(Namespaces.getPhotoUri(photoId), SempicOnto.Photo);
 
-        // TODO Add ownerId
-        
         pRes.addLiteral(SempicOnto.albumId, albumId);
         pRes.addLiteral(SempicOnto.ownerId, ownerId);
 
@@ -351,6 +411,9 @@ public class RDFStore {
      * Query a Photo and retrieve all the direct properties of the photo and if
      * the property are depic, takenIn or takenBy, it also retrieve the labels
      * of the object of these properties
+     * 
+     * TODO Liste des annotations d’une photo
+
      *
      * @param id
      * @return
