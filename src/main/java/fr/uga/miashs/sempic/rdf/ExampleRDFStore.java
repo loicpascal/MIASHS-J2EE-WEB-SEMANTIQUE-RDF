@@ -46,7 +46,7 @@ public class ExampleRDFStore {
         m.add(newPerson, SempicOnto.owns, newCat);
         */
         
-        Resource newDog = m.createResource("http://miashs.univ-grenoble-alpes.fr/resources/Tika", SempicOnto.Dog);
+        Resource newDog = m.createResource(Namespaces.resNS + "Tika", SempicOnto.Dog);
         newDog.addLiteral(RDFS.label, "Tika");
 
         //m.write(System.out, "turtle");
