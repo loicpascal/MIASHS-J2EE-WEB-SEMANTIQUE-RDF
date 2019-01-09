@@ -57,18 +57,23 @@ public class RDFStore {
     }
 
     /**
-     * Clean all resource before reinsert them
+     * Clean all resource before reinsert them (base sempic)
      */
     public void cleanAllResource() {
         cnx.begin(ReadWrite.WRITE);
         cnx.update("DELETE WHERE { ?s ?p ?o }");
         cnx.commit();
-        
+    }
+    
+    /**
+     * Clean all resource before reinsert them (base sempic-dbpedia)
+     */
+    public void cleanAllResourceDbpedia() {
         cnxDbpedia.begin(ReadWrite.WRITE);
         cnxDbpedia.update("DELETE WHERE { ?s ?p ?o }");
         cnxDbpedia.commit();
     }
-
+    
     /**
      * Save the given model into the triple store.
      * @param m THe Jena model to be persisted
@@ -410,7 +415,6 @@ public class RDFStore {
      * of the object of these properties
      * 
      * TODO Liste des annotations d’une photo
-
      *
      * @param id
      * @return

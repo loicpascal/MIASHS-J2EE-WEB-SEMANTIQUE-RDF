@@ -30,17 +30,17 @@ public class ExampleRDFStore {
         Resource pRes1 = s.createPhoto(1, 1, 1);
         Resource pRes2 = s.createPhoto(2, 1, 1);
         */
-/*
-        Resource newPerson1 = m.createResource(SempicOnto.Male);
+
+        Resource newPerson1 = m.createResource(Namespaces.resNS + "Manuel", SempicOnto.Male);
         newPerson1.addLiteral(RDFS.label, "Manuel");
         m.write(System.out, "turtle");
  
-        Resource newPerson2 = m.createResource(SempicOnto.Male);
+        Resource newPerson2 = m.createResource(Namespaces.resNS + "Jerome", SempicOnto.Male);
         newPerson2.addLiteral(RDFS.label, "Jérome");
         m.write(System.out, "turtle");
 
         // Julie femme de Jérome
-        Resource newPerson3 = m.createResource(SempicOnto.Female);
+        Resource newPerson3 = m.createResource(Namespaces.resNS + "Julie", SempicOnto.Female);
         newPerson3.addLiteral(RDFS.label, "Julie");
         m.add(newPerson1, SempicOnto.hasWife, newPerson3);
         m.write(System.out, "turtle");
@@ -100,7 +100,7 @@ public class ExampleRDFStore {
         m.write(System.out, "turtle");
 
         s.saveModel(m);
-        */
+        
 
     
         
@@ -127,11 +127,10 @@ public class ExampleRDFStore {
         s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
         s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbr + "Grenoble");
     */
-        s.cleanAllResource();
+        // TODO cleanAllResource : séparer data et dbpedia
+        s.cleanAllResourceDbpedia();
         s.createPopulatedPlaces();
-        
-        
-        
+  
         // Test dbpedia
         System.out.println("\nDbpedia listPopulatedPlaces :\n");
         try {
