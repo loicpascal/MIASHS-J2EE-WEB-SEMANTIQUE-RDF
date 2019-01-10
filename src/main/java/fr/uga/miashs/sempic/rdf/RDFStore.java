@@ -199,9 +199,19 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listDepictionClasses() {
-        List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
-        
-        return classes;
+        String queryStr = "CONSTRUCT { "
+                + "?s <" + RDFS.label + "> ?o "
+                + "} WHERE {"
+                + "?s <" + RDFS.subClassOf + "> <" + SempicOnto.Depiction.getURI() + "> ."
+                + "?s <" + RDFS.label + "> ?o ."
+                + " FILTER (?s != <" + SempicOnto.Depiction.getURI() + "> )"
+                + "}";
+        Query query = QueryFactory.create(queryStr);
+        query.addOrderBy("?o", Query.ORDER_ASCENDING);
+        debug("Query listDepictionClasses", queryStr);
+        Model m = cnx.queryConstruct(query);
+
+        return m.listSubjects().toList();
     }
     
     /**
