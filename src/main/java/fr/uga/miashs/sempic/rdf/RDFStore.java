@@ -282,6 +282,45 @@ public class RDFStore {
     }
     
     /**
+     * Retourne la liste des auteurs de photos
+     *
+     * @return
+     */
+    public List<Resource> listAuthors() {
+        String queryStr = "CONSTRUCT { "
+                + "    ?s <" + RDFS.label + "> ?name "
+                + "} WHERE {"
+                + "    ?s a <" + SempicOnto.Person + "> ;"
+                +          "<" + RDFS.label + "> ?name."
+                + "    ?s2 <" + SempicOnto.takenBy + "> ?s"
+                + "}";
+        Query query = QueryFactory.create(queryStr);
+        
+        Model m = cnx.queryConstruct(query);
+
+        return m.listSubjects().toList();
+    }
+    
+    /**
+     * Retourne la liste des selfies (une photo qui décrit la personne qui est auteur de cette photo)
+     *
+     * @return
+     */
+    public List<Resource> getSelfies() {
+        String queryStr = "CONSTRUCT { "
+                + "    ?photo <" + SempicOnto.depicts + "> ?person "
+                + "} WHERE {"
+                + "    ?photo <" + SempicOnto.depicts + "> ?person ;"
+                + "           <" + SempicOnto.takenBy + "> ?person."
+                + "}";
+        Query query = QueryFactory.create(queryStr);
+        
+        Model m = cnx.queryConstruct(query);
+
+        return m.listSubjects().toList();
+    }
+    
+    /**
      * Enregistre dans une base locale toutes les villes françaises > 50000 habitants (dbpedia)
      */
     public void createPopulatedPlaces()  {
@@ -339,19 +378,6 @@ public class RDFStore {
         return places;
     }
 
-    /**
-     * TODO Retourne la liste des auteurs de photos (personnes
-     *
-     * @return
-     */
-    /*
-    public List<Resource> listAuthors() {
-        // http://dbpedia.org/ontology/PopulatedPlace
-        
-        //return classes;
-    }
-    */
- 
     /**
      * Create a list of anonymous instances for each of the classes
      * given as parameter. The created instances have a label "a "+ label of the class.
