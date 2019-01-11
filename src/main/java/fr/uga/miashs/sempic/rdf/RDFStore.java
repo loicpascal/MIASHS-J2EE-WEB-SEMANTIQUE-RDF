@@ -5,11 +5,13 @@
 package fr.uga.miashs.sempic.rdf;
 
 import fr.uga.miashs.sempic.model.rdf.SempicOnto;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.ejb.Stateless;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
@@ -50,6 +52,8 @@ public class RDFStore {
     
     protected final RDFConnection cnx; // base sempic
     protected final RDFConnection cnxDbpedia; // base sempic-dbpedia
+    
+    private List<Resource> places = new ArrayList<Resource>();
 
     public RDFStore() {
         cnx = RDFConnectionFactory.connect(ENDPOINT_QUERY, ENDPOINT_UPDATE, ENDPOINT_GSP);
@@ -368,13 +372,48 @@ public class RDFStore {
         
         Model m = cnxDbpedia.queryConstruct(q); 
         
-        /*
-        cities.sort(String.CASE_INSENSITIVE_ORDER);
-        cities.sort(Comparator.naturalOrder());
-        */
-        
         List<Resource> places = m.listSubjects().toList();
 
+        return places;
+    }
+    
+    /**
+     * Retourne toutes les villes françaises > 50000 habitants triées par nom
+     *
+     * @return
+     */
+    public List<Resource> listPopulatedPlacesSelect()  {
+        String query = "SELECT ?place"
+            + "   WHERE {"
+            + "       ?place ?prop ?name"
+            + "   }"
+            + "   order by ?name";
+        
+        Query q = QueryFactory.create(query);
+        
+        //List<Resource> places;
+                
+        cnxDbpedia.querySelect(q, (qs) -> {
+            Resource subject = qs.getResource("place") ;
+            //System.out.println("Subject: " + subject) ;
+            places.add(subject);
+        }) ;
+        
+        //Model m = ModelFactory.createDefaultModel();
+        
+        
+        //List<Resource> places = m.listSubjects().toList();
+        
+        /*
+        ResultSet rs = qExec.execSelect() ;
+        while(rs.hasNext()) {
+            QuerySolution qs = rs.next() ;
+            Resource subject = qs.getResource("s") ;
+            System.out.println("Subject: "+subject) ;
+        }
+        */
+        
+        
         return places;
     }
 

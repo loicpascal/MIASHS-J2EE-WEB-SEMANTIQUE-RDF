@@ -103,14 +103,14 @@ public class ExampleRDFStore {
  
         System.out.println("\n\nOnthologie Depiction :\n");
         
-        List<Resource> classes = s.listSubClassesOf(SempicOnto.Depiction);
-        classes.forEach(c -> {System.out.println(c);});
+        //List<Resource> classes = s.listSubClassesOf(SempicOnto.Depiction);
+        //classes.forEach(c -> {System.out.println(c);});
         
 
         System.out.println("\n\n Instances Depiction :\n");
         
-        List<Resource> res = s.listInstancesByType(SempicOnto.Depiction.getURI());
-        res.forEach(r -> {System.out.println(r);});
+        //List<Resource> res = s.listInstancesByType(SempicOnto.Depiction.getURI());
+        //res.forEach(r -> {System.out.println(r);});
         
 
 
@@ -121,24 +121,37 @@ public class ExampleRDFStore {
         s.createAnnotationObject(1, SempicOnto.depicts.getURI(), tika.getURI());
         s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
         s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbr + "Grenoble");
+        s.createAnnotationObject(1, SempicOnto.takenBy.getURI(), newPerson1.getURI());
         
-        List<Resource> resDepict = s.getPhotoDepictions(1);
-        resDepict.forEach(r -> {System.out.println(r);});
+        //List<Resource> resDepict = s.getPhotoDepictions(1);
+        //resDepict.forEach(r -> {System.out.println(r);});
       
-        */
+        System.out.println("\n\n listAuthors :\n");
+        Resource pRes2 = s.createPhoto(2, 1, 1);
+        s.createAnnotationObject(2, SempicOnto.takenBy.getURI(), newPerson2.getURI());
+        
+        //List<Resource> resAuthor = s.listAuthors();
+        //resAuthor.forEach(r -> {System.out.println(r);});
         
         
-        s.cleanAllResource(SempicOnto.Depiction.getURI());
+        System.out.println("\n\n getSelfies :\n");
+        s.createAnnotationObject(2, SempicOnto.depicts.getURI(), newPerson2.getURI());
+        s.createAnnotationData(2, SempicOnto.title.getURI(), "Ma photo selfie");
+        
+        List<Resource> resSelfy = s.getSelfies();
+        resSelfy.forEach(r -> {System.out.println(r);});
+        
+        //s.cleanAllResource(SempicOnto.Depiction.getURI());
         //s.cleanAllDepicts();
      
-        //s.cleanAllResourceDbpedia();
-        //s.createPopulatedPlaces();
-  
+        s.cleanAllResourceDbpedia();
+        s.createPopulatedPlaces();
+  */
         // Test dbpedia
-        /*
-        System.out.println("\nDbpedia listPopulatedPlaces :\n");
+        
+        System.out.println("\nDbpedia listPopulatedPlacesSelect :\n");
         try {
-            List<Resource> places = s.listPopulatedPlaces();
+            List<Resource> places = s.listPopulatedPlacesSelect();
             places.forEach(p -> {
                 System.out.println(p);
             });
@@ -147,7 +160,7 @@ public class ExampleRDFStore {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        */
+        
   
         
 //
