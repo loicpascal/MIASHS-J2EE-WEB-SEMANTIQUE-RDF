@@ -22,7 +22,8 @@ public class ExampleRDFStore {
     public static void main(String[] args) {
         RDFStore s = new RDFStore();
 
-        //s.cleanAllResource();
+        /*
+        s.cleanAllResource();
 
         Model m = ModelFactory.createDefaultModel();
 
@@ -106,12 +107,14 @@ public class ExampleRDFStore {
         classes.forEach(c -> {System.out.println(c);});
         
 
-        System.out.println("\n\n Instances dog :\n");
+        System.out.println("\n\n Instances Depiction :\n");
         
-        List<Resource> res = s.listInstancesByType("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Dog");
+        List<Resource> res = s.listInstancesByType(SempicOnto.Depiction.getURI());
         res.forEach(r -> {System.out.println(r);});
         
-        System.out.println("\n\n Photos :\n");
+
+
+        System.out.println("\n\n Création photos + annotations :\n");
         
         Resource pRes1 = s.createPhoto(1, 1, 1);
         
@@ -122,8 +125,12 @@ public class ExampleRDFStore {
         List<Resource> resDepict = s.getPhotoDepictions(1);
         resDepict.forEach(r -> {System.out.println(r);});
       
+        */
+        
+        
+        s.cleanAllResource(SempicOnto.Depiction.getURI());
+        //s.cleanAllDepicts();
      
-        // TODO cleanAllResource : séparer data et dbpedia
         //s.cleanAllResourceDbpedia();
         //s.createPopulatedPlaces();
   

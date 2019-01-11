@@ -57,7 +57,7 @@ public class RDFStore {
     }
 
     /**
-     * Clean all resource before reinsert them (base sempic)
+     * Supprime toutes les ressources
      */
     public void cleanAllResource() {
         cnx.begin(ReadWrite.WRITE);
@@ -66,7 +66,23 @@ public class RDFStore {
     }
     
     /**
-     * Clean all resource before reinsert them (base sempic-dbpedia)
+     * Supprime toutes les ressources par type
+     * TODO : ne marche pas !! Doit-on supp les instances des sous-types avant ?
+     * 
+     * @param typeUri
+     */
+    public void cleanAllResource(String typeUri) {
+        cnx.begin(ReadWrite.WRITE);
+        cnx.update("DELETE WHERE { ?s a <" + typeUri + "> }");
+        
+        
+        debug("cleanAllResource", "DELETE WHERE { ?s a <" + typeUri + "> }");
+        
+        cnx.commit();
+    }
+    
+    /**
+     * Supprime toutes les ressources (base sempic-dbpedia)
      */
     public void cleanAllResourceDbpedia() {
         cnxDbpedia.begin(ReadWrite.WRITE);
@@ -157,13 +173,10 @@ public class RDFStore {
         }
     }
     
-    /**
-     * TODO fonction qui nettoie toutes les annotations (mais pas les photos)
-     * 
+   /**
     * Delete all the statements where the resource appears as subject and property uri appears as property
     * @param r The named resource to be deleted (the resource cannot be annonymous)
     */
-
    public void deleteResource(Resource r, String pURI) {
        if (r.isURIResource()) {
            cnx.begin(ReadWrite.WRITE);
@@ -171,7 +184,16 @@ public class RDFStore {
            cnx.commit();
        }
    }
-
+   
+   /**
+    * Supprime toutes les annotations "depicts"
+    */
+   public void cleanAllDepicts() {
+        cnx.begin(ReadWrite.WRITE);
+        cnx.update("DELETE WHERE { ?s <" + SempicOnto.depicts + "> ?o }");
+        cnx.commit();
+   }
+   
     /**
      * Retieves all the resources that are subclasses of resource c. To be
      * selected classes must have the property rdfs:label instanciated
