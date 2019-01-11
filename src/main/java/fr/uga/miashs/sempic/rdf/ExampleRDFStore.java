@@ -49,7 +49,7 @@ public class ExampleRDFStore {
         m.write(System.out, "turtle");
 
         // Fatima mère de Daniel donc grand mère de Jérome et Julie
-        Resource newPerson5 = m.createResource(Namespaces.resNS + "Fatima", SempicOnto.Male);
+        Resource newPerson5 = m.createResource(Namespaces.resNS + "Fatima", SempicOnto.Female);
         newPerson5.addLiteral(RDFS.label, "Fatima");
         m.add(newPerson5, SempicOnto.hasSon, newPerson4);
         m.write(System.out, "turtle");
