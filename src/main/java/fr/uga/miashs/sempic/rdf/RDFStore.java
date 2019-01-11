@@ -7,6 +7,7 @@ package fr.uga.miashs.sempic.rdf;
 import fr.uga.miashs.sempic.model.rdf.SempicOnto;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -197,6 +198,20 @@ public class RDFStore {
         cnx.update("DELETE WHERE { ?s <" + SempicOnto.depicts + "> ?o }");
         cnx.commit();
    }
+   
+   /* TODO fonction qui nettoie toutes les annotations (mais pas les photos)
+    * 
+    * Delete all the statements where the resource appears as subject and object uri appears as object
+    * @param r The named resource to be deleted (the resource cannot be annonymous)
+    */
+
+    public void deleteAnnotationByObject(Resource r, String pURI) {
+        if (r.isURIResource()) {
+            cnx.begin(ReadWrite.WRITE);
+            cnx.update("DELETE WHERE { <" + r.getURI() + "> <" + SempicOnto.depicts + "> <" + pURI + "> }");
+            cnx.commit();
+        }
+    }
    
     /**
      * Retieves all the resources that are subclasses of resource c. To be
@@ -482,6 +497,29 @@ public class RDFStore {
         Property prop = m.getProperty(pUri);
         
         photo.addLiteral(prop, l);
+        this.saveModel(m);
+        
+        return photo;
+    }
+    
+    /**
+     * Crée une annotation avec une propriété data
+     *
+     * TODO gérer exeption si uri inconnue ?
+     * 
+     * @param photoId
+     * @param pUri
+     * @param l
+     * @return
+     */
+    public Resource createAnnotationDataUsingDate(long photoId, String pUri, Calendar d) {
+        Model m = ModelFactory.createDefaultModel();
+        
+        String photoUri = Namespaces.getPhotoUri(photoId);
+        Resource photo = m.getResource(photoUri);
+        Property prop = m.getProperty(pUri);
+        
+        photo.addLiteral(prop, d);
         this.saveModel(m);
         
         return photo;
