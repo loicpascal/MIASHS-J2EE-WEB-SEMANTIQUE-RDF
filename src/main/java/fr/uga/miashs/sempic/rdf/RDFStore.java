@@ -5,14 +5,11 @@
 package fr.uga.miashs.sempic.rdf;
 
 import fr.uga.miashs.sempic.model.rdf.SempicOnto;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import javax.ejb.Stateless;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
@@ -25,9 +22,9 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.sparql.modify.request.QuadAcc;
 import org.apache.jena.sparql.modify.request.UpdateDeleteWhere;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.update.Update;
 import org.apache.jena.vocabulary.RDFS;
 
@@ -53,7 +50,7 @@ public class RDFStore {
     
     protected final RDFConnection cnx; // base sempic
     protected final RDFConnection cnxDbpedia; // base sempic-dbpedia
-    
+        
     private List<Resource> places = new ArrayList<Resource>();
 
     public RDFStore() {
@@ -199,8 +196,7 @@ public class RDFStore {
         cnx.commit();
    }
    
-   /* TODO fonction qui nettoie toutes les annotations (mais pas les photos)
-    * 
+   /* 
     * Delete all the statements where the resource appears as subject and object uri appears as object
     * @param r The named resource to be deleted (the resource cannot be annonymous)
     */
@@ -374,22 +370,21 @@ public class RDFStore {
      *
      * @return
      */
-    public List<Resource> listPopulatedPlaces()  {
+    public List<Resource> listPopulatedPlacesConstruct()  {
         String query = "CONSTRUCT {"
             + "       ?place ?prop ?name"
             + "   }"
             + "   WHERE {"
             + "       ?place ?prop ?name"
-            + "   }"
-            + "   order by ?name";
+            + "   }";
         
         Query q = QueryFactory.create(query);
         
         Model m = cnxDbpedia.queryConstruct(q); 
         
-        List<Resource> places = m.listSubjects().toList();
+        List<Resource> placesTmp = m.listSubjects().toList();
 
-        return places;
+        return placesTmp;
     }
     
     /**
@@ -397,29 +392,28 @@ public class RDFStore {
      *
      * @return
      */
-    public List<Resource> listPopulatedPlacesSelect()  {
-        String query = "SELECT ?place"
+    public List<Resource> listPopulatedPlaces()  {
+        String query = "SELECT ?place ?prop ?name"
             + "   WHERE {"
-            + "       ?place ?prop ?name"
+            + "       ?place ?prop ?name"  
             + "   }"
             + "   order by ?name";
         
         Query q = QueryFactory.create(query);
-        
-        //List<Resource> places;
-                
+
+        Model m = ModelFactory.createDefaultModel();
+ 
         cnxDbpedia.querySelect(q, (qs) -> {
             Resource subject = qs.getResource("place") ;
-            //System.out.println("Subject: " + subject) ;
+            subject.addProperty(FOAF.name, qs.getLiteral("name"));
             places.add(subject);
         }) ;
+
+        return places;
         
-        //Model m = ModelFactory.createDefaultModel();
+       /*
+        TODO Permettrait de se passer de l'attribut places
         
-        
-        //List<Resource> places = m.listSubjects().toList();
-        
-        /*
         ResultSet rs = qExec.execSelect() ;
         while(rs.hasNext()) {
             QuerySolution qs = rs.next() ;
@@ -427,9 +421,6 @@ public class RDFStore {
             System.out.println("Subject: "+subject) ;
         }
         */
-        
-        
-        return places;
     }
 
     /**
