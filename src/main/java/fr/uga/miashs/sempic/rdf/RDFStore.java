@@ -26,6 +26,7 @@ import org.apache.jena.sparql.modify.request.QuadAcc;
 import org.apache.jena.sparql.modify.request.UpdateDeleteWhere;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.update.Update;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDFS;
 
 /**
@@ -610,5 +611,19 @@ public class RDFStore {
         return m.getResource(pUri);
     }
 
-    
+    public List<Resource> getObjectPropertyByDomain(String pUri)
+    {
+        String s = "CONSTRUCT {"
+                + "    ?s <" + RDFS.label + "> ?name "
+                + "} "
+                + "WHERE { "
+                + "    ?s a <" + OWL.ObjectProperty + "> ;"
+                + "      <" + RDFS.domain + "> ?o ;"
+                + "      <" + RDFS.label + "> ?name ."
+                + "    <" + pUri + "> <" + RDFS.subClassOf + "> ?o ."
+                + "}";
+        Model m = cnx.queryConstruct(s);
+ 
+        return m.listSubjects().toList();
+    }
 }
