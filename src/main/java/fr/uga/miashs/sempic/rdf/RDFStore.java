@@ -44,6 +44,11 @@ public class RDFStore {
     // Endpoints base sempic-onto
     public final static String ENDPOINT_ONTO_QUERY = "http://localhost:3030/sempic-onto/sparql"; // SPARQL endpoint
 
+    // Endpoints base sempic-data
+    public final static String ENDPOINT_DATA_QUERY = "http://localhost:3030/sempic-data/sparql"; // SPARQL endpoint
+    public final static String ENDPOINT_DATA_UPDATE = "http://localhost:3030/sempic-data/update"; // SPARQL UPDATE endpoint
+    public final static String ENDPOINT_DATA_GSP = "http://localhost:3030/sempic-data/sparql"; // Graph Store Protocol
+    
     // Endpoints base sempic-dbpedia
     public final static String ENDPOINT_DBPEDIA_QUERY = "http://localhost:3030/sempic-dbpedia/sparql"; // SPARQL endpoint
     public final static String ENDPOINT_DBPEDIA_UPDATE = "http://localhost:3030/sempic-dbpedia/update"; // SPARQL UPDATE endpoint
@@ -53,12 +58,14 @@ public class RDFStore {
     public final static String ENDPOINT_DBPEDIA = "http://fr.dbpedia.org/sparql";
     
     protected final RDFConnection cnx; // base sempic
+    protected final RDFConnection cnxData; // base sempic-data
     protected final RDFConnection cnxDbpedia; // base sempic-dbpedia
         
     private List<Resource> places = new ArrayList<Resource>();
 
     public RDFStore() {
         cnx = RDFConnectionFactory.connect(ENDPOINT_QUERY, ENDPOINT_UPDATE, ENDPOINT_GSP);
+        cnxData = RDFConnectionFactory.connect(ENDPOINT_DATA_QUERY, ENDPOINT_DATA_UPDATE, ENDPOINT_DATA_GSP);
         cnxDbpedia = RDFConnectionFactory.connect(ENDPOINT_DBPEDIA_QUERY, ENDPOINT_DBPEDIA_UPDATE, ENDPOINT_DBPEDIA_GSP);
     }
 
@@ -72,17 +79,40 @@ public class RDFStore {
     }
     
     /**
+     * Supprime toutes les ressources d'annotation
+     * 
+     * @param typeUri
+     */
+    public void cleanAllAnnotationResource() {
+        cnxData.begin(ReadWrite.WRITE);
+        
+        String queryStr = "DELETE {?s ?p ?o}"
+                + "WHERE {" 
+                + "    ?s a ?type ." 
+                + "    ?s ?p ?o ." 
+                + "    FILTER (" 
+                + "        ?type != <" + SempicOnto.Photo + ">" 
+                + "    )"
+                + "}";
+        cnxData.update(queryStr);
+
+        debug("cleanAllAnnotationResource", queryStr);
+        
+        cnxData.commit();
+    }
+    
+    /**
      * Supprime toutes les ressources par type
-     * TODO : ne marche pas !! Doit-on supp les instances des sous-types avant ?
+     * TODO : ne marche pas !! Doit-on supp les instances des sous-types avant ? ne marche toujours pas avec subClassOf :'(
      * 
      * @param typeUri
      */
     public void cleanAllResource(String typeUri) {
         cnx.begin(ReadWrite.WRITE);
-        cnx.update("DELETE WHERE { ?s a <" + typeUri + "> }");
+        cnx.update("DELETE WHERE { ?s <" + RDFS.subClassOf + "> <" + typeUri + "> }");
         
         
-        debug("cleanAllResource", "DELETE WHERE { ?s a <" + typeUri + "> }");
+        debug("cleanAllResource " + typeUri, "DELETE WHERE { ?s <" + RDFS.subClassOf + "> <" + typeUri + "> }");
         
         cnx.commit();
     }
@@ -221,7 +251,6 @@ public class RDFStore {
      * @return
      */
     public List<Resource> listSubClassesOf(Resource c) {
-        
         String queryStr = "CONSTRUCT { "
                 + "?s <" + RDFS.label + "> ?o "
                 + "} WHERE {"

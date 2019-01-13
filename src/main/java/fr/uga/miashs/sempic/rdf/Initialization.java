@@ -19,11 +19,13 @@ import org.apache.jena.vocabulary.RDFS;
 public class Initialization {
     public static void main(String[] args) {
         RDFStore s = new RDFStore();
-
-        // TODO ne pas supprimer les ressources photos ? Ex : fonction cleanAllAnnotationResource
         
         // Initialisation des ressources d'annotations
-        s.cleanAllResource();
+        s.cleanAllDepicts();
+        s.cleanAllAnnotationResource();
+        
+        // Supprime toutes les ressources, y compris les photos
+        //s.cleanAllResource();
 
         Model m = ModelFactory.createDefaultModel();
 
