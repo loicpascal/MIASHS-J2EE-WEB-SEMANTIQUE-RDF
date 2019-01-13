@@ -411,6 +411,15 @@ public class RDFStore {
 
         return places;
         
+        /*
+        TODO à essayer (CF poly 17 du jena.pdf)
+        
+        Model method to create a Statement :
+        – Statement createStatement(Resource s, Property p, RDFNode o)
+        Model methods to add it newly created Statements :
+        – Model add(Statement stmt)
+        */
+        
        /*
         TODO Permettrait de se passer de l'attribut places
         

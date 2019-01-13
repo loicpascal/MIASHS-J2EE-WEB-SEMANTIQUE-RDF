@@ -11,6 +11,7 @@ import org.apache.jena.query.QueryParseException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.RDFS;
 
@@ -22,85 +23,6 @@ public class ExampleRDFStore {
     public static void main(String[] args) {
         RDFStore s = new RDFStore();
 
-        /*
-        s.cleanAllResource();
-
-        Model m = ModelFactory.createDefaultModel();
-
-        Resource newPerson1 = m.createResource(Namespaces.resNS + "Manuel", SempicOnto.Male);
-        newPerson1.addLiteral(RDFS.label, "Manuel");
-        m.write(System.out, "turtle");
- 
-        Resource newPerson2 = m.createResource(Namespaces.resNS + "Jerome", SempicOnto.Male);
-        newPerson2.addLiteral(RDFS.label, "Jérome");
-        m.write(System.out, "turtle");
-
-        // Julie femme de Jérome
-        Resource newPerson3 = m.createResource(Namespaces.resNS + "Julie", SempicOnto.Female);
-        newPerson3.addLiteral(RDFS.label, "Julie");
-        m.add(newPerson1, SempicOnto.hasWife, newPerson3);
-        m.write(System.out, "turtle");
-
-        // Daniel père de Jérome et Julie
-        Resource newPerson4 = m.createResource(Namespaces.resNS + "Daniel", SempicOnto.Male);
-        newPerson4.addLiteral(RDFS.label, "Daniel");
-        m.add(newPerson4, SempicOnto.hasDaughter, newPerson3);
-        m.add(newPerson4, SempicOnto.hasSon, newPerson2);
-        m.write(System.out, "turtle");
-
-        // Fatima mère de Daniel donc grand mère de Jérome et Julie
-        Resource newPerson5 = m.createResource(Namespaces.resNS + "Fatima", SempicOnto.Female);
-        newPerson5.addLiteral(RDFS.label, "Fatima");
-        m.add(newPerson5, SempicOnto.hasSon, newPerson4);
-        m.write(System.out, "turtle");
-
-        Resource newDog = m.createResource(Namespaces.resNS + "Medor", SempicOnto.Dog);
-        newDog.addLiteral(RDFS.label, "Medor");
-        m.add(newPerson1, SempicOnto.owns, newDog);
-        m.write(System.out, "turtle");
-
-        
-        Resource newCat = m.createResource(Namespaces.resNS + "Felix", SempicOnto.Cat);
-        newCat.addLiteral(RDFS.label, "Felix");
-        m.add(newPerson2, SempicOnto.owns, newCat);
-        m.write(System.out, "turtle");
-        
-        
-        Resource tika = m.createResource(Namespaces.resNS + "Tika", SempicOnto.Dog);
-        tika.addLiteral(RDFS.label, "Tika");
-        //m.write(System.out, "turtle");
-
-        
-        Resource newEvent1 = m.createResource(Namespaces.resNS + "Anniversaire", SempicOnto.Event);
-        newEvent1.addLiteral(RDFS.label, "Anniversaire");
-        m.write(System.out, "turtle");
-
-        Resource newEvent2 = m.createResource(Namespaces.resNS + "Cremaillere", SempicOnto.Event);
-        newEvent2.addLiteral(RDFS.label, "Crémaillère");
-        m.write(System.out, "turtle");
-
-        Resource newEvent3 = m.createResource(Namespaces.resNS + "PotDepart", SempicOnto.Event);
-        newEvent3.addLiteral(RDFS.label, "Pôt de départ");
-        m.write(System.out, "turtle");
-
-        Resource newMonument = m.createResource(Namespaces.resNS + "TourEiffel", SempicOnto.Monument);
-        newMonument.addLiteral(RDFS.label, "Tour Eiffel");
-        m.write(System.out, "turtle");
-
-        Resource newNature1 = m.createResource(Namespaces.resNS + "Montagne", SempicOnto.Nature);
-        newNature1.addLiteral(RDFS.label, "Montagne");
-        m.write(System.out, "turtle");
-
-        Resource newNature2 = m.createResource(Namespaces.resNS + "Plage", SempicOnto.Nature);
-        newNature2.addLiteral(RDFS.label, "Plage");
-        m.write(System.out, "turtle");
-        
-        s.saveModel(m);
-
-        //s.deleteModel(m);
-        //s.cnx.load(m);
-        
- 
         System.out.println("\n\nOnthologie Depiction :\n");
         
         //List<Resource> classes = s.listSubClassesOf(SempicOnto.Depiction);
@@ -113,30 +35,31 @@ public class ExampleRDFStore {
         //res.forEach(r -> {System.out.println(r);});
         
 
-
         System.out.println("\n\n Création photos + annotations :\n");
         
         Resource pRes1 = s.createPhoto(1, 1, 1);
         
+        /*
         s.createAnnotationObject(1, SempicOnto.depicts.getURI(), tika.getURI());
         s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
         s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbr + "Grenoble");
         s.createAnnotationObject(1, SempicOnto.takenBy.getURI(), newPerson1.getURI());
+        */
         
         //List<Resource> resDepict = s.getPhotoDepictions(1);
         //resDepict.forEach(r -> {System.out.println(r);});
       
         System.out.println("\n\n listAuthors :\n");
         Resource pRes2 = s.createPhoto(2, 1, 1);
-        s.createAnnotationObject(2, SempicOnto.takenBy.getURI(), newPerson2.getURI());
+        //s.createAnnotationObject(2, SempicOnto.takenBy.getURI(), newPerson2.getURI());
         
         //List<Resource> resAuthor = s.listAuthors();
         //resAuthor.forEach(r -> {System.out.println(r);});
         
         
         System.out.println("\n\n getSelfies :\n");
-        s.createAnnotationObject(2, SempicOnto.depicts.getURI(), newPerson2.getURI());
-        s.createAnnotationData(2, SempicOnto.title.getURI(), "Ma photo selfie");
+        //s.createAnnotationObject(2, SempicOnto.depicts.getURI(), newPerson2.getURI());
+        //s.createAnnotationData(2, SempicOnto.title.getURI(), "Ma photo selfie");
         
         List<Resource> resSelfy = s.getSelfies();
         resSelfy.forEach(r -> {System.out.println(r);});
@@ -144,17 +67,34 @@ public class ExampleRDFStore {
         //s.cleanAllResource(SempicOnto.Depiction.getURI());
         //s.cleanAllDepicts();
      
-        s.cleanAllResourceDbpedia();
-        s.createPopulatedPlaces();
-  */
+   
         // Test dbpedia
-        
-        System.out.println("\nDbpedia listPopulatedPlacesSelect :\n");
+        System.out.println("\nDbpedia listPopulatedPlacesConstruct :\n");
         try {
-            List<Resource> places = s.listPopulatedPlacesSelect();
+            List<Resource> places = s.listPopulatedPlacesConstruct();
             places.forEach(p -> {
                 System.out.println(p);
+                System.out.println(p.getProperty(FOAF.name, "fr").getLiteral());
             });
+        } catch (QueryParseException qpe) {
+            qpe.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("\nDbpedia listPopulatedPlaces :\n");
+        try {
+            List<Resource> placesSelect = s.listPopulatedPlaces();
+            for (Resource p : placesSelect) {
+                System.out.println(p.getProperty(FOAF.name, "fr").getLiteral());
+                System.out.println(p);
+            }
+            /*
+            placesSelect.forEach(p -> {
+                System.out.println(p.getProperty(FOAF.name, "fr").getLiteral());
+                System.out.println(p);
+            });
+            */
         } catch (QueryParseException qpe) {
             qpe.printStackTrace();
         } catch(Exception e) {
