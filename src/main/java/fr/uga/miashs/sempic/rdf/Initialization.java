@@ -20,7 +20,7 @@ public class Initialization {
     public static void main(String[] args) {
         RDFStore s = new RDFStore();
 
-        // TODO ne pas supprimer les ressources photos ?
+        // TODO ne pas supprimer les ressources photos ? Ex : fonction cleanAllAnnotationResource
         
         // Initialisation des ressources d'annotations
         s.cleanAllResource();

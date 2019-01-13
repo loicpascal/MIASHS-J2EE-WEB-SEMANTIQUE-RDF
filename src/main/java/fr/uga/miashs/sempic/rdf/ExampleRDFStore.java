@@ -46,8 +46,13 @@ public class ExampleRDFStore {
         s.createAnnotationObject(1, SempicOnto.takenBy.getURI(), newPerson1.getURI());
         */
         
-        //List<Resource> resDepict = s.getPhotoDepictions(1);
-        //resDepict.forEach(r -> {System.out.println(r);});
+        List<Resource> resDepict = s.getPhotoDepictions(1);
+        resDepict.forEach(r -> {System.out.println(r);});
+        
+        System.out.println("\n\n Object Properties :\n");
+
+        List<Resource> oP = s.getObjectPropertyByDomain("http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person");
+        oP.forEach(r -> {System.out.println(r);});
       
         System.out.println("\n\n listAuthors :\n");
         Resource pRes2 = s.createPhoto(2, 1, 1);
@@ -67,7 +72,6 @@ public class ExampleRDFStore {
         //s.cleanAllResource(SempicOnto.Depiction.getURI());
         //s.cleanAllDepicts();
      
-   
         // Test dbpedia
         System.out.println("\nDbpedia listPopulatedPlacesConstruct :\n");
         try {
@@ -101,6 +105,7 @@ public class ExampleRDFStore {
             e.printStackTrace();
         }
         
+  
   
         
 //
