@@ -28,6 +28,7 @@ import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.update.Update;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.XSD;
 
 /**
  *
@@ -61,7 +62,7 @@ public class RDFStore {
     protected final RDFConnection cnxData; // base sempic-data
     protected final RDFConnection cnxDbpedia; // base sempic-dbpedia
         
-    private List<Resource> places = new ArrayList<Resource>();
+    private List<Resource> queryList = new ArrayList<Resource>();
 
     public RDFStore() {
         cnx = RDFConnectionFactory.connect(ENDPOINT_QUERY, ENDPOINT_UPDATE, ENDPOINT_GSP);
@@ -278,7 +279,6 @@ public class RDFStore {
                 + "}";
         Query query = QueryFactory.create(queryStr);
         query.addOrderBy("?o", Query.ORDER_ASCENDING);
-        debug("Query listDepictionClasses", queryStr);
         Model m = cnx.queryConstruct(query);
 
         return m.listSubjects().toList();
@@ -459,13 +459,14 @@ public class RDFStore {
 
         Model m = ModelFactory.createDefaultModel();
  
+        queryList.clear();
         cnxDbpedia.querySelect(q, (qs) -> {
             Resource subject = qs.getResource("place") ;
             subject.addProperty(FOAF.name, qs.getLiteral("name"));
-            places.add(subject);
+            queryList.add(subject);
         }) ;
 
-        return places;
+        return queryList;
         
         /*
         TODO à essayer (CF poly 17 du jena.pdf)
@@ -685,11 +686,55 @@ public class RDFStore {
                 + "    ?s a <" + OWL.ObjectProperty + "> ;"
                 + "      <" + RDFS.domain + "> ?o ;"
                 + "      <" + RDFS.label + "> ?name ."
-                + "    <" + pUri + "> <" + RDFS.subClassOf + "> ?o ."
+                + "    <" + pUri + "> <" + RDFS.subClassOf + ">* ?o ."
                 + "  }"
                 + "}";
         Model m = cnx.queryConstruct(s);
+        debug("Query getObjectPropertyByDomain", s);
  
         return m.listSubjects().toList();
+    }
+
+    public List<Resource> searchPhoto(long id, String title, String type, String objectProperty, String instance,
+                String city, String dateDebut, String dateFin) {
+        String ns = "PREFIX xsd: <" + XSD.NS + ">";
+        String query = "SELECT distinct ?photo ?title"
+            + "  WHERE {"
+            + "    ?photo a <" + SempicOnto.Photo + "> ;"
+            + "      <" + SempicOnto.ownerId + "> ?ownerId ;"
+            + "      <" + SempicOnto.title + "> ?title ;"
+            + "      <" + SempicOnto.depicts + "> ?depict ;"
+            + (dateDebut != null || dateFin != null ?
+              "      <" + SempicOnto.takenAt + "> ?takenAt ;" : "")
+            + (city != null ?
+              "      <" + SempicOnto.takenIn + "> <" + city+ "> ;" : "")
+            + (type != null ? " ." +
+              "      ?depict a <" + type + ">" : "")
+            + (objectProperty != null && instance != null ? " ." +
+              "      ?depict <" + objectProperty + "> <" + instance + ">" : "")
+            + "    FILTER("
+            + "      ?ownerId = " + id
+            + (objectProperty == null && instance != null ?
+              "      && ?depict = <" + instance + ">" : "")
+            + (title != null ?
+              "      && regex(?title, \"" + title + "\", \"i\")" : "")
+            + (dateDebut != null ?
+              "      && ?takenAt >= \"" + dateDebut + "T00:00:00Z\"^^xsd:dateTime" : "")
+            + (dateFin != null ?
+              "      && ?takenAt <= \"" + dateFin + "T23:59:59Z\"^^xsd:dateTime" : "")
+            + "    )"
+            + "  }"
+            + "  order by desc(?photo)";
+        Query q = QueryFactory.create(ns + query);
+        debug("Query searchPhoto", query);
+ 
+        queryList.clear();
+        cnx.querySelect(q, (qs) -> {
+            Resource subject = qs.getResource("photo") ;
+            subject.addProperty(SempicOnto.title, qs.getLiteral("title"));
+            queryList.add(subject);
+        }) ;
+
+        return queryList;
     }
 }

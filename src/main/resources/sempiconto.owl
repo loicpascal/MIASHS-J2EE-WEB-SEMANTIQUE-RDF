@@ -555,16 +555,16 @@
         <rdfs:subClassOf rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Depiction"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#takenBy"/>
+                <owl:onProperty rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasParent"/>
                 <owl:onClass rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person"/>
-                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">2</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasParent"/>
+                <owl:onProperty rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#takenBy"/>
                 <owl:onClass rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Person"/>
-                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">2</owl:maxQualifiedCardinality>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -605,6 +605,186 @@
     </rdf:Description>
     <rdf:Description rdf:about="urn:swrl#d">
         <rdf:type rdf:resource="&swrl;Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="urn:swrl#a">
+        <rdf:type rdf:resource="&swrl;Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="urn:swrl#b">
+        <rdf:type rdf:resource="&swrl;Variable"/>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="&swrl;Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Female"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#b"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;AtomList"/>
+                        <rdf:rest rdf:resource="&rdf;nil"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasGrandChild"/>
+                                <swrl:argument1 rdf:resource="urn:swrl#a"/>
+                                <swrl:argument2 rdf:resource="urn:swrl#b"/>
+                            </rdf:Description>
+                        </rdf:first>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest rdf:resource="&rdf;nil"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasGrandDaughter"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#a"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#b"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="&swrl;Imp"/>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest rdf:resource="&rdf;nil"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasDaughter"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#p"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:head>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;AtomList"/>
+                        <rdf:rest rdf:resource="&rdf;nil"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasChild"/>
+                                <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                                <swrl:argument1 rdf:resource="urn:swrl#p"/>
+                            </rdf:Description>
+                        </rdf:first>
+                    </rdf:Description>
+                </rdf:rest>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Female"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#c"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:body>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="&swrl;Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;AtomList"/>
+                        <rdf:rest rdf:resource="&rdf;nil"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasChild"/>
+                                <swrl:argument1 rdf:resource="urn:swrl#b"/>
+                                <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                            </rdf:Description>
+                        </rdf:first>
+                    </rdf:Description>
+                </rdf:rest>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasChild"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#a"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#b"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest rdf:resource="&rdf;nil"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasGrandChild"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#a"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="&swrl;Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;AtomList"/>
+                        <rdf:rest rdf:resource="&rdf;nil"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasParent"/>
+                                <swrl:argument1 rdf:resource="urn:swrl#d"/>
+                                <swrl:argument2 rdf:resource="urn:swrl#p"/>
+                            </rdf:Description>
+                        </rdf:first>
+                    </rdf:Description>
+                </rdf:rest>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasDaughter"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#p"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest rdf:resource="&rdf;nil"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasSister"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#d"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:head>
     </rdf:Description>
     <rdf:Description>
         <rdf:type rdf:resource="&swrl;Imp"/>
@@ -659,9 +839,9 @@
                 <rdf:first>
                     <rdf:Description>
                         <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasSister"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasSon"/>
                         <swrl:argument2 rdf:resource="urn:swrl#c"/>
-                        <swrl:argument1 rdf:resource="urn:swrl#d"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#p"/>
                     </rdf:Description>
                 </rdf:first>
             </rdf:Description>
@@ -676,19 +856,61 @@
                         <rdf:first>
                             <rdf:Description>
                                 <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasParent"/>
-                                <swrl:argument1 rdf:resource="urn:swrl#d"/>
-                                <swrl:argument2 rdf:resource="urn:swrl#p"/>
+                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasChild"/>
+                                <swrl:argument2 rdf:resource="urn:swrl#c"/>
+                                <swrl:argument1 rdf:resource="urn:swrl#p"/>
                             </rdf:Description>
                         </rdf:first>
                     </rdf:Description>
                 </rdf:rest>
                 <rdf:first>
                     <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Male"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#c"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:body>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="&swrl;Imp"/>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest rdf:resource="&rdf;nil"/>
+                <rdf:first>
+                    <rdf:Description>
                         <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasDaughter"/>
-                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
-                        <swrl:argument1 rdf:resource="urn:swrl#p"/>
+                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasGrandSon"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#a"/>
+                        <swrl:argument2 rdf:resource="urn:swrl#b"/>
+                    </rdf:Description>
+                </rdf:first>
+            </rdf:Description>
+        </swrl:head>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="&swrl;AtomList"/>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;AtomList"/>
+                        <rdf:rest rdf:resource="&rdf;nil"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasGrandChild"/>
+                                <swrl:argument1 rdf:resource="urn:swrl#a"/>
+                                <swrl:argument2 rdf:resource="urn:swrl#b"/>
+                            </rdf:Description>
+                        </rdf:first>
+                    </rdf:Description>
+                </rdf:rest>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&swrl;ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Male"/>
+                        <swrl:argument1 rdf:resource="urn:swrl#b"/>
                     </rdf:Description>
                 </rdf:first>
             </rdf:Description>
@@ -733,92 +955,6 @@
                         <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasBrother"/>
                         <swrl:argument2 rdf:resource="urn:swrl#c"/>
                         <swrl:argument1 rdf:resource="urn:swrl#d"/>
-                    </rdf:Description>
-                </rdf:first>
-            </rdf:Description>
-        </swrl:head>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="&swrl;Imp"/>
-        <swrl:head>
-            <rdf:Description>
-                <rdf:type rdf:resource="&swrl;AtomList"/>
-                <rdf:rest rdf:resource="&rdf;nil"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasSon"/>
-                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
-                        <swrl:argument1 rdf:resource="urn:swrl#p"/>
-                    </rdf:Description>
-                </rdf:first>
-            </rdf:Description>
-        </swrl:head>
-        <swrl:body>
-            <rdf:Description>
-                <rdf:type rdf:resource="&swrl;AtomList"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="&swrl;ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Male"/>
-                        <swrl:argument1 rdf:resource="urn:swrl#c"/>
-                    </rdf:Description>
-                </rdf:first>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="&swrl;AtomList"/>
-                        <rdf:rest rdf:resource="&rdf;nil"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasChild"/>
-                                <swrl:argument2 rdf:resource="urn:swrl#c"/>
-                                <swrl:argument1 rdf:resource="urn:swrl#p"/>
-                            </rdf:Description>
-                        </rdf:first>
-                    </rdf:Description>
-                </rdf:rest>
-            </rdf:Description>
-        </swrl:body>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="&swrl;Imp"/>
-        <swrl:body>
-            <rdf:Description>
-                <rdf:type rdf:resource="&swrl;AtomList"/>
-                <rdf:rest>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="&swrl;AtomList"/>
-                        <rdf:rest rdf:resource="&rdf;nil"/>
-                        <rdf:first>
-                            <rdf:Description>
-                                <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                                <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasChild"/>
-                                <swrl:argument2 rdf:resource="urn:swrl#c"/>
-                                <swrl:argument1 rdf:resource="urn:swrl#p"/>
-                            </rdf:Description>
-                        </rdf:first>
-                    </rdf:Description>
-                </rdf:rest>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="&swrl;ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#Female"/>
-                        <swrl:argument1 rdf:resource="urn:swrl#c"/>
-                    </rdf:Description>
-                </rdf:first>
-            </rdf:Description>
-        </swrl:body>
-        <swrl:head>
-            <rdf:Description>
-                <rdf:type rdf:resource="&swrl;AtomList"/>
-                <rdf:rest rdf:resource="&rdf;nil"/>
-                <rdf:first>
-                    <rdf:Description>
-                        <rdf:type rdf:resource="&swrl;IndividualPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://miashs.univ-grenoble-alpes.fr/ontologies/sempic.owl#hasDaughter"/>
-                        <swrl:argument2 rdf:resource="urn:swrl#c"/>
-                        <swrl:argument1 rdf:resource="urn:swrl#p"/>
                     </rdf:Description>
                 </rdf:first>
             </rdf:Description>
