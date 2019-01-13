@@ -40,7 +40,10 @@ public class RDFStore {
     public final static String ENDPOINT_QUERY = "http://localhost:3030/sempic/sparql"; // SPARQL endpoint
     public final static String ENDPOINT_UPDATE = "http://localhost:3030/sempic/update"; // SPARQL UPDATE endpoint
     public final static String ENDPOINT_GSP = "http://localhost:3030/sempic/data"; // Graph Store Protocol
-    
+
+    // Endpoints base sempic-onto
+    public final static String ENDPOINT_ONTO_QUERY = "http://localhost:3030/sempic-onto/sparql"; // SPARQL endpoint
+
     // Endpoints base sempic-dbpedia
     public final static String ENDPOINT_DBPEDIA_QUERY = "http://localhost:3030/sempic-dbpedia/sparql"; // SPARQL endpoint
     public final static String ENDPOINT_DBPEDIA_UPDATE = "http://localhost:3030/sempic-dbpedia/update"; // SPARQL UPDATE endpoint
@@ -242,7 +245,7 @@ public class RDFStore {
                 + "} WHERE {"
                 + "?s <" + RDFS.subClassOf + "> <" + SempicOnto.Depiction.getURI() + "> ."
                 + "?s <" + RDFS.label + "> ?o ."
-                + " FILTER (?s != <" + SempicOnto.Depiction.getURI() + "> )"
+                + " FILTER (?s != <" + SempicOnto.Depiction.getURI() + "> && ?s != <" + Namespaces.dboFR + "Place> )"
                 + "}";
         Query query = QueryFactory.create(queryStr);
         query.addOrderBy("?o", Query.ORDER_ASCENDING);
@@ -291,6 +294,29 @@ public class RDFStore {
         Query query = QueryFactory.create(queryStr);
         
         debug("Query listInstancesByType", queryStr);
+
+        Model m = cnx.queryConstruct(query);
+
+        return m.listSubjects().toList();
+    }
+    
+    /**
+     * Retourne les instances de type du range de l'object property passé en paramètre
+     * @param objectPropertyUri
+     * @return
+     */
+    public List<Resource> listInstancesByObjectProperty(String objectPropertyUri) {
+        String queryStr = "CONSTRUCT {"
+                + "?s <" + RDFS.label + "> ?name "
+                + "} WHERE {"
+                + "  SERVICE <" + ENDPOINT_ONTO_QUERY + "> {"
+                + "    <" + objectPropertyUri + "> <" + RDFS.range + "> ?range"
+                + "  }"
+                + "  ?s a ?range ;"
+                + "     <" + RDFS.label + "> ?name"
+                + "}";
+        Query query = QueryFactory.create(queryStr);
+        debug("Query listInstancesByObjectProperty", queryStr);
 
         Model m = cnx.queryConstruct(query);
 
@@ -617,10 +643,12 @@ public class RDFStore {
                 + "    ?s <" + RDFS.label + "> ?name "
                 + "} "
                 + "WHERE { "
+                + "  SERVICE <" + ENDPOINT_ONTO_QUERY + "> {"
                 + "    ?s a <" + OWL.ObjectProperty + "> ;"
                 + "      <" + RDFS.domain + "> ?o ;"
                 + "      <" + RDFS.label + "> ?name ."
                 + "    <" + pUri + "> <" + RDFS.subClassOf + "> ?o ."
+                + "  }"
                 + "}";
         Model m = cnx.queryConstruct(s);
  
