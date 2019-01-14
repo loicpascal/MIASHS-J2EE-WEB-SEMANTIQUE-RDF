@@ -703,7 +703,8 @@ public class RDFStore {
             + "    ?photo a <" + SempicOnto.Photo + "> ;"
             + "      <" + SempicOnto.ownerId + "> ?ownerId ;"
             + "      <" + SempicOnto.title + "> ?title ;"
-            + "      <" + SempicOnto.depicts + "> ?depict ;"
+            + (type != null || instance != null ?
+              "      <" + SempicOnto.depicts + "> ?depict ;" : "")
             + (dateDebut != null || dateFin != null ?
               "      <" + SempicOnto.takenAt + "> ?takenAt ;" : "")
             + (city != null ?
