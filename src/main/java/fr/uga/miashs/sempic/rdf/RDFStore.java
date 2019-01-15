@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -710,23 +711,25 @@ public class RDFStore {
     }
 
     public List<Resource> searchPhoto(long id, String title, String type, String objectProperty, String instance,
-                String city, String dateDebut, String dateFin) {
+                String city, String dateDebut, String dateFin, String auteur) {
         String ns = "PREFIX xsd: <" + XSD.NS + ">";
         String query = "SELECT distinct ?photo ?title"
             + "  WHERE {"
             + "    ?photo a <" + SempicOnto.Photo + "> ;"
             + "      <" + SempicOnto.ownerId + "> ?ownerId ;"
-            + "      <" + SempicOnto.title + "> ?title ;"
             + (type != null || instance != null ?
               "      <" + SempicOnto.depicts + "> ?depict ;" : "")
             + (dateDebut != null || dateFin != null ?
               "      <" + SempicOnto.takenAt + "> ?takenAt ;" : "")
             + (city != null ?
               "      <" + SempicOnto.takenIn + "> <" + city+ "> ;" : "")
+            + (auteur != null ?
+              "      <" + SempicOnto.takenBy + "> <" + auteur + "> ;" : "")
             + (type != null ? " ." +
               "      ?depict a <" + type + ">" : "")
             + (objectProperty != null && instance != null ? " ." +
               "      ?depict <" + objectProperty + "> <" + instance + ">" : "")
+            + "    OPTIONAL { ?photo <" + SempicOnto.title + "> ?title }"
             + "    FILTER("
             + "      ?ownerId = " + id
             + (objectProperty == null && instance != null ?
@@ -746,7 +749,9 @@ public class RDFStore {
         queryList.clear();
         cnx.querySelect(q, (qs) -> {
             Resource subject = qs.getResource("photo") ;
-            subject.addProperty(SempicOnto.title, qs.getLiteral("title"));
+            Literal literal = qs.getLiteral("title");
+            if (null != literal)
+                subject.addProperty(SempicOnto.title, literal);
             queryList.add(subject);
         }) ;
 
