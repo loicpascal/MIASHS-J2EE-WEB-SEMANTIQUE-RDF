@@ -500,23 +500,22 @@ public class RDFStore {
         }
         */
     }
-
+    
     /**
-     * Create a list of anonymous instances for each of the classes
+     * Create an instance
      * given as parameter. The created instances have a label "a "+ label of the class.
-     * @param classes
+     * @param typeUri
      * @return 
      */
-    public List<Resource> createAnonInstances(List<Resource> classes) {
+    public Resource createAnonInstance(String typeUri) {
         Model m = ModelFactory.createDefaultModel();
-        List<Resource> res = new ArrayList<>();
-        for (Resource c : classes) {
-            Resource instance = m.createResource(c);
-            instance.addLiteral(RDFS.label, "a " + c.getProperty(RDFS.label).getLiteral());
-            res.add(instance);
-        }
+        Resource type = m.getResource(typeUri);
+        Resource instance = m.createResource(type);
+        instance.addLiteral(RDFS.label, "un/une " + type.getLocalName());
         
-        return res;
+        this.saveModel(m);
+        
+        return instance;
     }
     
     /**
