@@ -63,7 +63,8 @@ public class RDFStore {
     protected final RDFConnection cnxDbpedia; // base sempic-dbpedia
         
     private List<Resource> queryList = new ArrayList<Resource>();
-
+    private List<Resource> queryDepictionClassList = new ArrayList<Resource>();
+        
     public RDFStore() {
         cnx = RDFConnectionFactory.connect(ENDPOINT_QUERY, ENDPOINT_UPDATE, ENDPOINT_GSP);
         cnxData = RDFConnectionFactory.connect(ENDPOINT_DATA_QUERY, ENDPOINT_DATA_UPDATE, ENDPOINT_DATA_GSP);
@@ -265,11 +266,44 @@ public class RDFStore {
     }
     
     /**
-     * Retourne tous les types Depiction
+     * Retourne tous les types Depiction triés par label
      *
      * @return
      */
     public List<Resource> listDepictionClasses() {
+        String query = "SELECT ?s ?label"
+                + " WHERE {"
+                + "     ?s <" + RDFS.subClassOf + "> <" + SempicOnto.Depiction.getURI() + "> ."
+                + "     ?s <" + RDFS.label + "> ?label ."
+                + "     FILTER ("
+                + "         ?s != <" + SempicOnto.Depiction.getURI() + "> "
+                + "         && ?s != <" + Namespaces.dboFR + "Place>"
+                + "         && lang(?label) = 'fr'"
+                + "     )"
+                + " }"
+                + " order by ?label";
+        
+        Query q = QueryFactory.create(query);
+
+        Model m = ModelFactory.createDefaultModel();
+
+        queryDepictionClassList.clear();
+        cnx.querySelect(q, (qs) -> {
+            Resource subject = qs.getResource("s") ;
+            subject.addProperty(RDFS.label, qs.getLiteral("label"));
+            queryDepictionClassList.add(subject);
+        }) ;
+
+        return queryDepictionClassList;
+    }
+    
+    /**
+     * Retourne tous les types Depiction
+     * @deprecated 
+     *
+     * @return
+     */
+    public List<Resource> listDepictionClassesCONSTRUCT() {
         String queryStr = "CONSTRUCT { "
                 + "?s <" + RDFS.label + "> ?o "
                 + "} WHERE {"
@@ -282,29 +316,6 @@ public class RDFStore {
         Model m = cnx.queryConstruct(query);
 
         return m.listSubjects().toList();
-    }
-    
-    /**
-     * Retourne tous les types Who
-     *
-     * @return
-     */
-    public List<Resource> listWhoDepictionClasses() {
-        List<Resource> classes = this.listSubClassesOf(SempicOnto.Depiction);
-        
-        return classes;
-    }
-    
-    /**
-     * Retourne tous les types What
-     *
-     * @return
-     */
-    public List<Resource> listWhatDepictionClasses() {
-        List<Resource> classes;
-        classes = this.listSubClassesOf(SempicOnto.Depiction);
-      
-        return classes;
     }
     
     /**
@@ -423,6 +434,7 @@ public class RDFStore {
     
     /**
      * Retourne toutes les villes françaises > 50000 habitants
+     * @deprecated 
      *
      * @return
      */
@@ -622,6 +634,9 @@ public class RDFStore {
                 + "}";
         Model m = cnx.queryConstruct(s);
  
+        // Par contre, quand je récupère les depictions de ma photo avec getPhotoDepictions(), il me retourne pas mes instances anonymes,
+        // Matthieu tu aurais une idée de comment modifier la requête pour qu'elle prenne en compte les noeuds anonymes ?
+        
         return m.listSubjects().toList();
         
     }
