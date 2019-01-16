@@ -408,7 +408,7 @@ public class RDFStore {
      */
     public void createPopulatedPlaces()  {
         String ns = "PREFIX dbo: <" + Namespaces.dbo + ">"
-            + "PREFIX dbr: <" + Namespaces.dbr + ">"
+            + "PREFIX dbr: <" + Namespaces.dbrFR + ">"
             + "PREFIX foaf: <" + Namespaces.foaf + ">";
 
         String query = "CONSTRUCT {"
