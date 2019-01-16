@@ -266,7 +266,7 @@ public class RDFStore {
     }
     
     /**
-     * Retourne tous les types Depiction triés par label
+     * Retourne tous les sous-types Depiction triés par label
      *
      * @return
      */

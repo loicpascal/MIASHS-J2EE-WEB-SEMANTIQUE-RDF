@@ -68,8 +68,25 @@ public class Initialization {
         
         Resource tika = m.createResource(Namespaces.resNS + "Tika", SempicOnto.Dog);
         tika.addLiteral(RDFS.label, "Tika");
+        m.add(newPerson3, SempicOnto.owns, tika);
+        m.write(System.out, "turtle");
+        
+        Resource babouche = m.createResource(Namespaces.resNS + "Babouche", SempicOnto.Cat);
+        babouche.addLiteral(RDFS.label, "Babouche");
+        m.add(newPerson3, SempicOnto.owns, babouche);
+        m.write(System.out, "turtle");
+        
+        Resource babar = m.createResource(Namespaces.resNS + "Babouche", SempicOnto.Animal);
+        babouche.addLiteral(RDFS.label, "Babar");
+        m.add(newPerson3, SempicOnto.owns, babar);
         m.write(System.out, "turtle");
 
+        /*
+        Resource chatAnon = m.createResource(SempicOnto.Cat);
+        m.add(newPerson3, SempicOnto.owns, chatAnon);
+        m.write(System.out, "turtle");
+        */
+        
         Resource newEvent1 = m.createResource(Namespaces.resNS + "Anniversaire", SempicOnto.Event);
         newEvent1.addLiteral(RDFS.label, "Anniversaire");
         m.write(System.out, "turtle");
@@ -94,10 +111,13 @@ public class Initialization {
         newNature2.addLiteral(RDFS.label, "Plage");
         m.write(System.out, "turtle");
         
+        // TODO Ajouter des liens et des données annotations 
+        
+        
         s.saveModel(m);
 
         // Initialisation des villes récupérées dans Dbpedia
-        s.cleanAllResourceDbpedia();
-        s.createPopulatedPlaces();
+        //s.cleanAllResourceDbpedia();
+        //s.createPopulatedPlaces();
     }
 }
