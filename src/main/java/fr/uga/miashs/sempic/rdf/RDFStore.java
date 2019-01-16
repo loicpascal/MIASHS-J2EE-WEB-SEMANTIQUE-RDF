@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -500,23 +501,22 @@ public class RDFStore {
         }
         */
     }
-
+    
     /**
-     * Create a list of anonymous instances for each of the classes
+     * Create an instance
      * given as parameter. The created instances have a label "a "+ label of the class.
-     * @param classes
+     * @param typeUri
      * @return 
      */
-    public List<Resource> createAnonInstances(List<Resource> classes) {
+    public Resource createAnonInstance(String typeUri) {
         Model m = ModelFactory.createDefaultModel();
-        List<Resource> res = new ArrayList<>();
-        for (Resource c : classes) {
-            Resource instance = m.createResource(c);
-            instance.addLiteral(RDFS.label, "a " + c.getProperty(RDFS.label).getLiteral());
-            res.add(instance);
-        }
+        Resource type = m.getResource(typeUri);
+        Resource instance = m.createResource(type);
+        instance.addLiteral(RDFS.label, "un/une " + type.getLocalName());
         
-        return res;
+        this.saveModel(m);
+        
+        return instance;
     }
     
     /**
@@ -711,23 +711,25 @@ public class RDFStore {
     }
 
     public List<Resource> searchPhoto(long id, String title, String type, String objectProperty, String instance,
-                String city, String dateDebut, String dateFin) {
+                String city, String dateDebut, String dateFin, String auteur) {
         String ns = "PREFIX xsd: <" + XSD.NS + ">";
         String query = "SELECT distinct ?photo ?title"
             + "  WHERE {"
             + "    ?photo a <" + SempicOnto.Photo + "> ;"
             + "      <" + SempicOnto.ownerId + "> ?ownerId ;"
-            + "      <" + SempicOnto.title + "> ?title ;"
             + (type != null || instance != null ?
               "      <" + SempicOnto.depicts + "> ?depict ;" : "")
             + (dateDebut != null || dateFin != null ?
               "      <" + SempicOnto.takenAt + "> ?takenAt ;" : "")
             + (city != null ?
               "      <" + SempicOnto.takenIn + "> <" + city+ "> ;" : "")
+            + (auteur != null ?
+              "      <" + SempicOnto.takenBy + "> <" + auteur + "> ;" : "")
             + (type != null ? " ." +
               "      ?depict a <" + type + ">" : "")
             + (objectProperty != null && instance != null ? " ." +
               "      ?depict <" + objectProperty + "> <" + instance + ">" : "")
+            + "    OPTIONAL { ?photo <" + SempicOnto.title + "> ?title }"
             + "    FILTER("
             + "      ?ownerId = " + id
             + (objectProperty == null && instance != null ?
@@ -747,7 +749,9 @@ public class RDFStore {
         queryList.clear();
         cnx.querySelect(q, (qs) -> {
             Resource subject = qs.getResource("photo") ;
-            subject.addProperty(SempicOnto.title, qs.getLiteral("title"));
+            Literal literal = qs.getLiteral("title");
+            if (null != literal)
+                subject.addProperty(SempicOnto.title, literal);
             queryList.add(subject);
         }) ;
 

@@ -29,18 +29,21 @@ public class Initialization {
 
         Model m = ModelFactory.createDefaultModel();
 
+        // Manuel
         Resource newPerson1 = m.createResource(Namespaces.resNS + "Manuel", SempicOnto.Male);
         newPerson1.addLiteral(RDFS.label, "Manuel");
         m.write(System.out, "turtle");
  
+        // Jerome
         Resource newPerson2 = m.createResource(Namespaces.resNS + "Jerome", SempicOnto.Male);
         newPerson2.addLiteral(RDFS.label, "Jérome");
         m.write(System.out, "turtle");
 
-        // Julie femme de Jérome
+        // Julie femme de Manuel, soeur de Jérome
         Resource newPerson3 = m.createResource(Namespaces.resNS + "Julie", SempicOnto.Female);
         newPerson3.addLiteral(RDFS.label, "Julie");
         m.add(newPerson1, SempicOnto.hasWife, newPerson3);
+        m.add(newPerson3, SempicOnto.hasBrother, newPerson2);
         m.write(System.out, "turtle");
 
         // Daniel père de Jérome et Julie
@@ -50,22 +53,27 @@ public class Initialization {
         m.add(newPerson4, SempicOnto.hasSon, newPerson2);
         m.write(System.out, "turtle");
 
-        // Fatima mère de Daniel donc grand mère de Jérome et Julie
+        // Fatima mère de Daniel, grand mère de Jérome et Julie
         Resource newPerson5 = m.createResource(Namespaces.resNS + "Fatima", SempicOnto.Female);
         newPerson5.addLiteral(RDFS.label, "Fatima");
         m.add(newPerson5, SempicOnto.hasSon, newPerson4);
+        m.add(newPerson5, SempicOnto.hasGrandSon, newPerson2);
+        m.add(newPerson5, SempicOnto.hasGrandDaughter, newPerson3);
         m.write(System.out, "turtle");
 
+        // Medor chien de Manuel
         Resource newDog = m.createResource(Namespaces.resNS + "Medor", SempicOnto.Dog);
         newDog.addLiteral(RDFS.label, "Medor");
-        m.add(newPerson1, SempicOnto.owns, newDog);
+        m.add(newPerson1, SempicOnto.hasDog, newDog);
         m.write(System.out, "turtle");
         
+        // Felix chat de Jerome
         Resource newCat = m.createResource(Namespaces.resNS + "Felix", SempicOnto.Cat);
         newCat.addLiteral(RDFS.label, "Felix");
-        m.add(newPerson2, SempicOnto.owns, newCat);
+        m.add(newPerson2, SempicOnto.hasCat, newCat);
         m.write(System.out, "turtle");
         
+        // Tika chien de personne
         Resource tika = m.createResource(Namespaces.resNS + "Tika", SempicOnto.Dog);
         tika.addLiteral(RDFS.label, "Tika");
         m.add(newPerson3, SempicOnto.owns, tika);
@@ -79,6 +87,11 @@ public class Initialization {
         Resource babar = m.createResource(Namespaces.resNS + "Babouche", SempicOnto.Animal);
         babouche.addLiteral(RDFS.label, "Babar");
         m.add(newPerson3, SempicOnto.owns, babar);
+        m.write(System.out, "turtle");
+        
+        // Television un produit
+        Resource tele = m.createResource(Namespaces.resNS + "Tele", SempicOnto.Product);
+        tele.addLiteral(RDFS.label, "Télévision");
         m.write(System.out, "turtle");
 
         /*
