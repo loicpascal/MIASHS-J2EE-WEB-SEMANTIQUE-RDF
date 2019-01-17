@@ -425,20 +425,43 @@ public class RDFStore {
     /**
      * Create an instance
      * given as parameter. The created instances have a label "a "+ label of the class.
+     * @param id
      * @param typeUri
      * @return 
      */
-    public Resource createAnonInstance(String typeUri) {
+    public Resource createAnonInstance(long id, String typeUri) {
         Model m = ModelFactory.createDefaultModel();
-        Resource type = m.getResource(typeUri);
-        Resource instance = m.createResource(null, type);
-        instance.addLiteral(RDFS.label, "un/une " + type.getLocalName());
-        
+
+        // Création du noeud anonyme
+        Resource type = this.getLabelResource(typeUri);
+        Resource instance = m.createResource(m.getResource(typeUri));
+        instance.addLiteral(RDFS.label, "un/une " + type.getProperty(RDFS.label, "fr").getLiteral().getString());
+
+        // Ajout du noeud à la photo
+        String photoUri = Namespaces.getPhotoUri(id);
+        Resource photo = m.getResource(photoUri);
+        m.add(photo, SempicOnto.depicts, instance);
+
+        // Enregistrement
         this.saveModel(m);
-        
+
         return instance;
     }
-    
+
+    public Resource getLabelResource(String uri) {
+        String query = "CONSTRUCT {"
+            + "   <" + uri + "> <" + RDFS.label + "> ?name"
+            + " }"
+            + " WHERE {"
+            + "   <" + uri + "> <" + RDFS.label + "> ?name"
+            + " }";
+        
+        Query q = QueryFactory.create(query);
+        Model m = cnx.queryConstruct(q); 
+
+        return m.listSubjects().nextResource();
+    }
+
     /**
      * Crée une annotation avec une propriété objet
      *
@@ -460,20 +483,7 @@ public class RDFStore {
         
         return photo;
     }
-    
-    public Resource createAnnotationObject(long photoId, String pUri, Resource o) {
-        Model m = ModelFactory.createDefaultModel();
 
-        String photoUri = Namespaces.getPhotoUri(photoId);
-        Resource photo = m.getResource(photoUri);
-        Property prop = m.getProperty(pUri);
-        
-        m.add(photo, prop, o);
-        this.saveModel(m);
-        
-        return photo;
-    }
-    
     /**
      * Crée une annotation avec une propriété data
      * 
