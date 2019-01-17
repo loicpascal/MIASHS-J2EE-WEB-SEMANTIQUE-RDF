@@ -43,7 +43,7 @@ public class ExampleRDFStore {
         Resource pRes2 = s.createPhoto(2, 1, 1);
         
         s.createAnnotationData(1, SempicOnto.title.getURI(), "Ma super photo");
-        s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbr + "Grenoble");
+        s.createAnnotationObject(1, SempicOnto.takenIn.getURI(), Namespaces.dbrFR + "Grenoble");
         s.createAnnotationData(2, SempicOnto.title.getURI(), "Ma photo selfie");
         */
         

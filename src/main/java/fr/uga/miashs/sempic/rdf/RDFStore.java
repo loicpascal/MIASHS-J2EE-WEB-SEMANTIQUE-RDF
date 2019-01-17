@@ -103,23 +103,7 @@ public class RDFStore {
         
         cnxData.commit();
     }
-    
-    /**
-     * Supprime toutes les ressources par type
-     * TODO : ne marche pas !! Doit-on supp les instances des sous-types avant ? ne marche toujours pas avec subClassOf :'(
-     * 
-     * @param typeUri
-     */
-    public void cleanAllResource(String typeUri) {
-        cnx.begin(ReadWrite.WRITE);
-        cnx.update("DELETE WHERE { ?s <" + RDFS.subClassOf + "> <" + typeUri + "> }");
-        
-        
-        debug("cleanAllResource " + typeUri, "DELETE WHERE { ?s <" + RDFS.subClassOf + "> <" + typeUri + "> }");
-        
-        cnx.commit();
-    }
-    
+
     /**
      * Supprime toutes les ressources (base sempic-dbpedia)
      */
@@ -299,27 +283,6 @@ public class RDFStore {
     }
     
     /**
-     * Retourne tous les types Depiction
-     * @deprecated 
-     *
-     * @return
-     */
-    public List<Resource> listDepictionClassesCONSTRUCT() {
-        String queryStr = "CONSTRUCT { "
-                + "?s <" + RDFS.label + "> ?o "
-                + "} WHERE {"
-                + "?s <" + RDFS.subClassOf + "> <" + SempicOnto.Depiction.getURI() + "> ."
-                + "?s <" + RDFS.label + "> ?o ."
-                + " FILTER (?s != <" + SempicOnto.Depiction.getURI() + "> && ?s != <" + Namespaces.dboFR + "Place> )"
-                + "}";
-        Query query = QueryFactory.create(queryStr);
-        query.addOrderBy("?o", Query.ORDER_ASCENDING);
-        Model m = cnx.queryConstruct(query);
-
-        return m.listSubjects().toList();
-    }
-    
-    /**
      * Retourne les instances d'un type donné
      *
      * @param typeUri
@@ -434,29 +397,6 @@ public class RDFStore {
     }
     
     /**
-     * Retourne toutes les villes françaises > 50000 habitants
-     * @deprecated 
-     *
-     * @return
-     */
-    public List<Resource> listPopulatedPlacesConstruct()  {
-        String query = "CONSTRUCT {"
-            + "       ?place ?prop ?name"
-            + "   }"
-            + "   WHERE {"
-            + "       ?place ?prop ?name"
-            + "   }";
-        
-        Query q = QueryFactory.create(query);
-        
-        Model m = cnxDbpedia.queryConstruct(q); 
-        
-        List<Resource> placesTmp = m.listSubjects().toList();
-
-        return placesTmp;
-    }
-    
-    /**
      * Retourne toutes les villes françaises > 50000 habitants triées par nom
      *
      * @return
@@ -480,26 +420,6 @@ public class RDFStore {
         }) ;
 
         return queryList;
-        
-        /*
-        TODO à essayer (CF poly 17 du jena.pdf)
-        
-        Model method to create a Statement :
-        – Statement createStatement(Resource s, Property p, RDFNode o)
-        Model methods to add it newly created Statements :
-        – Model add(Statement stmt)
-        */
-        
-       /*
-        TODO Permettrait de se passer de l'attribut places
-        
-        ResultSet rs = qExec.execSelect() ;
-        while(rs.hasNext()) {
-            QuerySolution qs = rs.next() ;
-            Resource subject = qs.getResource("s") ;
-            System.out.println("Subject: "+subject) ;
-        }
-        */
     }
     
     /**
@@ -521,8 +441,6 @@ public class RDFStore {
     
     /**
      * Crée une annotation avec une propriété objet
-     * 
-     * TODO gérer exeption si uri inconnue ?
      *
      * @param photoId
      * @param pUri
@@ -556,11 +474,8 @@ public class RDFStore {
         return photo;
     }
     
-    
     /**
      * Crée une annotation avec une propriété data
-     *
-     * TODO gérer exeption si uri inconnue ?
      * 
      * @param photoId
      * @param pUri
@@ -582,8 +497,6 @@ public class RDFStore {
     
     /**
      * Crée une annotation avec une propriété data
-     *
-     * TODO gérer exeption si uri inconnue ?
      * 
      * @param photoId
      * @param pUri
@@ -647,8 +560,6 @@ public class RDFStore {
     }
     
     /**
-     * A virer ?
-     *
      * @param id
      * @return
      */
