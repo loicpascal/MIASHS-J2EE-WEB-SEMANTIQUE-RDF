@@ -514,7 +514,7 @@ public class RDFStore {
 
         // Création du noeud anonyme
         Resource type = this.getLabelResource(typeUri);
-        Resource instance = m.createResource(typeUri);
+        Resource instance = m.createResource(m.getResource(typeUri));
         instance.addLiteral(RDFS.label, "un/une " + type.getProperty(RDFS.label, "fr").getLiteral().getString());
 
         // Ajout du noeud à la photo
