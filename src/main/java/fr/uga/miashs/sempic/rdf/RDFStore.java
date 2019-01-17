@@ -511,7 +511,7 @@ public class RDFStore {
     public Resource createAnonInstance(String typeUri) {
         Model m = ModelFactory.createDefaultModel();
         Resource type = m.getResource(typeUri);
-        Resource instance = m.createResource(type);
+        Resource instance = m.createResource(null, type);
         instance.addLiteral(RDFS.label, "un/une " + type.getLocalName());
         
         this.saveModel(m);
@@ -540,9 +540,18 @@ public class RDFStore {
         m.add(photo, prop, object);
         this.saveModel(m);
         
-        //debug("photo", photo);debug("Property", prop);debug("object", object);
+        return photo;
+    }
+    
+    public Resource createAnnotationObject(long photoId, String pUri, Resource o) {
+        Model m = ModelFactory.createDefaultModel();
+
+        String photoUri = Namespaces.getPhotoUri(photoId);
+        Resource photo = m.getResource(photoUri);
+        Property prop = m.getProperty(pUri);
         
-        //m.write(System.out, "turtle");
+        m.add(photo, prop, o);
+        this.saveModel(m);
         
         return photo;
     }
@@ -630,15 +639,11 @@ public class RDFStore {
                 + "} "
                 + "WHERE { "
                 + "    <" + pUri + "> <" + SempicOnto.depicts + "> ?o . "
-                + "    ?o <" + RDFS.label + "> ?name"
+                + "    optional {?o <" + RDFS.label + "> ?name}"
                 + "}";
         Model m = cnx.queryConstruct(s);
- 
-        // Par contre, quand je récupère les depictions de ma photo avec getPhotoDepictions(), il me retourne pas mes instances anonymes,
-        // Matthieu tu aurais une idée de comment modifier la requête pour qu'elle prenne en compte les noeuds anonymes ?
         
         return m.listSubjects().toList();
-        
     }
     
     /**
